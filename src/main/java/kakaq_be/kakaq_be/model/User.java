@@ -13,8 +13,9 @@ import java.sql.Timestamp;
 public class User {
 
     @Id
-    @Column(nullable = false, length = 50)
-    private String email;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    private int id;
 
     @Column(nullable = false, length = 20)
     private String username;
@@ -22,8 +23,8 @@ public class User {
     @Column(nullable = false, length = 20)
     private String password;
 
-    @Column(nullable = false)
-    private int id;
+    @Column(unique = true, nullable = false, length = 50)
+    private String email;
 
     @Column(nullable = false, length = 50)
     private String role;

@@ -28,8 +28,6 @@ public class HttpControllerTest {
         System.out.println(rq_user);
         User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail());
         System.out.println(new_user);
-        if(userRepository.existsById((rq_user.getEmail())))
-            return 10000;
         userRepository.save(new_user);
         return 0;
     }
