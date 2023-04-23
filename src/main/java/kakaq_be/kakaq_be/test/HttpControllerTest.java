@@ -53,9 +53,9 @@ public class HttpControllerTest {
 
         // 보낼 본문 데이터 설정
         System.out.println(topic);
-        String prompt = topic + "에 대한 설문조사 질문지 폼을 객관식 답변용으로만 5개 만들어줘";
+        String prompt = topic + "에 대한 설문조사 질문지 폼을 객관식 질문으로 5개 만들어주는데, 선택지는 1, 2, 3, 4와 마지막 5.기타로 해줘";
         System.out.println(prompt);
-        String requestBody = "{\"prompt\":\"" + prompt + "\",\"max_tokens\":4000,\"temperature\":0.7}";
+        String requestBody = "{\"prompt\":\"" + prompt + "\",\"max_tokens\":3900,\"temperature\":0.7}";
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
         // API에 요청
