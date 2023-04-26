@@ -20,7 +20,7 @@ public class User {
     @Column(nullable = false, length = 20)
     private String username;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false, length = 50)
@@ -41,7 +41,6 @@ public class User {
         this.role = "student";
         this.createDate = new Timestamp(System.currentTimeMillis());
     }
-
 //    @Builder
 //    public User(String email, String password){
 //        this.id = 0;
