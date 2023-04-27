@@ -17,29 +17,23 @@ import java.util.Objects;
 @RestController
 public class HttpControllerTest {
 
-    @GetMapping("/http/get")
-    public List <User> getTest(User m) {
-        return userRepository.findAll();
-    }
 
-    @RequestMapping("/http/post")
-    public String postTest(@RequestBody User m) {
-        return "post 요청: " + m.getId() + ", " + m.getUsername() + ", " + m.getPassword() + ", " + m.getEmail();
-    }
 
     @Autowired UserRepository userRepository;
-    @RequestMapping("/http/signup")
+    @RequestMapping("/api/user/register")
     public int signupTest(@RequestBody User rq_user){
-
         System.out.println(rq_user);
         User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail());
         System.out.println(new_user);
         userRepository.save(new_user);
         return 0;
     }
+
+
+
     String gpt_API_KEY = "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";
 
-    @GetMapping("/http/topic")
+    @GetMapping("/api/survey/create/chatbot")
 //    @SendTo("/topic/public")
     public String sendTopic(HttpServletRequest param) {
         System.out.println(param);
@@ -69,13 +63,5 @@ public class HttpControllerTest {
     }
 
 
-    @PutMapping("/http/put")
-    public String putTest() {
-        return "put 요청";
-    }
 
-    @DeleteMapping("/http/delete")
-    public String deleteTest() {
-        return "delete 요청";
-    }
 }
