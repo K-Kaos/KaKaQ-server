@@ -1,8 +1,7 @@
-package kakaq_be.kakaq_be.model;
+package kakaq_be.kakaq_be.user.Domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;

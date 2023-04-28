@@ -1,5 +1,7 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
+import kakaq_be.kakaq_be.survey.Domain.Question;
+import kakaq_be.kakaq_be.survey.Domain.Response;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
 import kakaq_be.kakaq_be.survey.Dto.QuestionDto;
 import kakaq_be.kakaq_be.survey.Dto.ResponseDto;
@@ -32,8 +34,8 @@ public class SurveyController {
 
     // Create a new survey
     @PostMapping("/survey/create")
-    public Survey createSurvey(@Valid @RequestBody SurveyDto surveyDto) {
-        return surveyService.createSurvey(surveyDto);
+    public Survey createSurvey(@Valid @RequestBody Survey survey) {
+        return surveyService.createSurvey(survey);
     }
 
     // Get all surveys
@@ -44,10 +46,10 @@ public class SurveyController {
 
     // Get a survey by id
     @GetMapping("/surveys/{id}")
-    public ResponseEntity<SurveyDto> getSurveyById(@PathVariable(value = "id") Long surveyId)
+    public ResponseEntity<Survey> getSurveyById(@PathVariable(value = "id") Long surveyId)
             throws ResourceNotFoundException {
-        SurveyDto surveyDto = surveyService.getSurveyById(surveyId);
-        return ResponseEntity.ok().body(surveyDto);
+        Survey survey = surveyService.getSurveyById(surveyId);
+        return ResponseEntity.ok().body(survey);
     }
 
     // Get surveys by user id
@@ -59,46 +61,46 @@ public class SurveyController {
 
     // Update a survey
     @PutMapping("/survey/{id}")
-    public ResponseEntity<SurveyDto> updateSurvey(@PathVariable(value = "id") Long surveyId,
-                                                  @Valid @RequestBody SurveyDto surveyDto) throws ResourceNotFoundException {
-        SurveyDto updatedSurveyDto = surveyService.updateSurvey(surveyId, surveyDto);
-        return ResponseEntity.ok(updatedSurveyDto);
+    public ResponseEntity<Survey> updateSurvey(@PathVariable(value = "id") Long surveyId,
+                                               @Valid @RequestBody Survey survey) throws ResourceNotFoundException {
+        Survey updatedSurvey = surveyService.updateSurvey(surveyId, survey);
+        return ResponseEntity.ok(updatedSurvey);
     }
 
     // Delete a survey
     @DeleteMapping("/survey/{id}")
-    public Map<String, Boolean> deleteSurvey(@PathVariable(value = "id") Long surveyId)
+    public ResponseEntity<Map<String, Boolean>> deleteSurvey(@PathVariable(value = "id") Long surveyId)
             throws ResourceNotFoundException {
         surveyService.deleteSurvey(surveyId);
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     // Get all questions for a survey
     @GetMapping("/survey/{id}/questions")
-    public List<QuestionDto> getAllQuestionsForSurvey(@PathVariable(value = "id") Long surveyId)
+    public List<Question> getAllQuestionsForSurvey(@PathVariable(value = "id") Long surveyId)
             throws ResourceNotFoundException {
         return questionService.getAllQuestionsForSurvey(surveyId);
     }
 
     // Get a question by id
     @GetMapping("/question/{id}")
-    public ResponseEntity<QuestionDto> getQuestionById(@PathVariable(value = "id") Long questionId)
+    public ResponseEntity<Question> getQuestionById(@PathVariable(value = "id") Long questionId)
             throws ResourceNotFoundException {
-        QuestionDto questionDto = questionService.getQuestionById(questionId);
-        return ResponseEntity.ok().body(questionDto);
+        Question question = questionService.getQuestionById(questionId);
+        return ResponseEntity.ok().body(question);
     }
 
     // Create a new response
     @PostMapping("/response/create")
-    public ResponseDto createResponse(@Valid @RequestBody ResponseDto responseDto) {
-        return responseService.createResponse(responseDto);
+    public Response createResponse(@Valid @RequestBody Response response) {
+        return responseService.createResponse(response);
     }
 
     // Get all responses for a survey
     @GetMapping("/surveys/{id}/responses")
-    public List<ResponseDto> getAllResponsesForSurvey(@PathVariable(value = "id") Long surveyId)
+    public List<Response> getAllResponsesForSurvey(@PathVariable(value = "id") Long surveyId)
             throws ResourceNotFoundException {
         return responseService.getAllResponsesForSurvey(surveyId);
     }

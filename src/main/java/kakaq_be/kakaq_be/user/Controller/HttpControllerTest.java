@@ -1,8 +1,8 @@
-package kakaq_be.kakaq_be.test;
+package kakaq_be.kakaq_be.user.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kakaq_be.kakaq_be.model.User;
-import kakaq_be.kakaq_be.repository.UserRepository;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.MediaType;
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")

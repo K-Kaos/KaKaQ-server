@@ -1,7 +1,7 @@
 package kakaq_be.kakaq_be.survey.Domain;
 
 import jakarta.persistence.*;
-import kakaq_be.kakaq_be.model.User;
+import kakaq_be.kakaq_be.user.Domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

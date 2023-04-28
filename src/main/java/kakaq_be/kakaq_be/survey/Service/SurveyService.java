@@ -1,7 +1,7 @@
 package kakaq_be.kakaq_be.survey.Service;
 
-import kakaq_be.kakaq_be.model.User;
-import kakaq_be.kakaq_be.repository.UserRepository;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,9 @@ public class SurveyService {
     @Autowired
     private SurveyRepository surveyRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // Create a new survey
     public Survey createSurvey(Survey survey) {
         return surveyRepository.save(survey);
@@ -29,12 +32,16 @@ public class SurveyService {
 
     // Get a survey by id
     public Survey getSurveyById(Long surveyId) {
-        return surveyRepository.findById(surveyId).orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
+        return surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
     }
 
-    public Survey getSurveysByUserId(Long userId) {
-        return surveyRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+    public List<Survey> getSurveysByUserId(Long userId) {
+        User user = userRepository.findById(userId.toString())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+        return surveyRepository.findByUserId(userId);
     }
+
 
     // Update a survey
     public Survey updateSurvey(Long surveyId, Survey surveyDetails) {
