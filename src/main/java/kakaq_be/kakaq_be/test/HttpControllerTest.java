@@ -1,8 +1,11 @@
 package kakaq_be.kakaq_be.test;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletRequest;
 import kakaq_be.kakaq_be.model.User;
 import kakaq_be.kakaq_be.repository.UserRepository;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
@@ -11,8 +14,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.MediaType;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api")
@@ -26,6 +30,99 @@ public class HttpControllerTest {
         System.out.println(new_user);
         userRepository.save(new_user);
         return 0;
+    }
+
+    @RequestMapping("/mypage/gps")
+    public String sendGPS(@RequestBody Map<String, Double> gpsData){
+        Double latitude = gpsData.get("latitude");
+        Double longitude = gpsData.get("longitude");
+        String addr = "https://dapi.kakao.com/v2/local/geo/coord2address.json?";
+        addr= addr+"x=" +longitude +"&y="+latitude;
+
+        try {
+            //위의 주소를 가지고 URL 객체를 생성
+
+            URL url = new URL(addr);
+
+            //URL 객체를 가지고 HttpURLConnection 객체 만들기
+
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+
+
+            //인증부분은 받아야 하면 api에 작성되어있습니다.
+
+            //인증받기
+
+            con.setRequestProperty("Authorization", "카카오 api 자리");
+
+            //옵션 설정
+
+            con.setConnectTimeout(20000);
+
+            con.setUseCaches(false);
+
+            //줄단위 데이터 읽기
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+
+
+            StringBuilder sb = new StringBuilder();
+
+            while(true) {
+
+                String line =br.readLine();
+
+                if(line ==null) {
+
+                    break;
+
+                }
+
+                //읽은 데이터가 있으면 sb에추가
+
+                sb.append(line);
+
+            }
+
+            br.close();
+
+            con.disconnect();
+
+
+
+            System.out.println(sb);
+
+            JSONObject obj = new JSONObject(sb.toString());
+
+            System.out.println(obj);
+
+            JSONArray imsi = obj.getJSONArray("documents");
+
+            System.out.println(imsi);
+
+            JSONObject o = imsi.getJSONObject(0);
+
+            System.out.println(o);
+
+            JSONObject c = o.getJSONObject("address");
+
+            String address= c.getString("address_name");
+
+
+
+            return address;
+
+        }catch (Exception e) {
+
+            System.out.println("지도보이기" + e.getMessage());
+
+            e.printStackTrace();
+
+        }
+
+        return "answer";
     }
     String gpt_API_KEY = "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";
     @RequestMapping("/survey/create/chatbot")
