@@ -1,4 +1,4 @@
-package kakaq_be.kakaq_be.survey.domain;
+package kakaq_be.kakaq_be.survey.Domain;
 
 import jakarta.persistence.*;
 import kakaq_be.kakaq_be.model.User;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.security.Timestamp;
 import java.util.List;
@@ -33,10 +33,10 @@ public class Survey {
     @ManyToOne
     private User creator;
 
-    @CreationTimestamp
+    @CreatedDate
     private Timestamp startDate;
 
-    @CreationTimestamp
+    @CreatedDate
     private Timestamp endDate;
 
     @Column(nullable = false)

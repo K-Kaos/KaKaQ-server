@@ -3,6 +3,8 @@ package kakaq_be.kakaq_be.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+
 import java.sql.Timestamp;
 
 @Data
@@ -29,7 +31,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String role;
 
-    @CreationTimestamp
+    @CreatedDate
     private Timestamp createDate;
 
     @Builder
@@ -41,16 +43,5 @@ public class User {
         this.role = "student";
         this.createDate = new Timestamp(System.currentTimeMillis());
     }
-
-//    @Builder
-//    public User(String email, String password){
-//        this.id = 0;
-//        this.username = null;
-//        this.password = password;
-//        this.email = email;
-//        this.role = "student";
-//        this.createDate = new Timestamp(System.currentTimeMillis());
-//
-//    }
 
 }

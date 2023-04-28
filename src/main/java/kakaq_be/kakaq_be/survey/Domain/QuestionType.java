@@ -1,4 +1,4 @@
-package kakaq_be.kakaq_be.survey.domain;
+package kakaq_be.kakaq_be.survey.Domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

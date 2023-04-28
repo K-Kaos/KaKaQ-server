@@ -1,4 +1,4 @@
-package kakaq_be.kakaq_be.survey.domain;
+package kakaq_be.kakaq_be.survey.Domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
