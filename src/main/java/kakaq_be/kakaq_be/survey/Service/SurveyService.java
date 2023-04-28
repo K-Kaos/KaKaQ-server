@@ -36,11 +36,11 @@ public class SurveyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
     }
 
-    public List<Survey> getSurveysByUserId(Long userId) {
-        User user = userRepository.findById(userId.toString())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        return surveyRepository.findByUserId(userId);
-    }
+//    public List<Survey> getSurveysByUserId(Long userId) {
+//        User user = userRepository.findById(userId.toString())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+//        return surveyRepository.findByUserId(userId);
+//    }
 
 
     // Update a survey

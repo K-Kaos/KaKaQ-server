@@ -53,11 +53,11 @@ public class SurveyController {
     }
 
     // Get surveys by user id
-    @GetMapping("/surveys/user/{userId}")
-    public List<Survey> getSurveysByUserId(@PathVariable(value = "userId") Long userId)
-            throws ResourceNotFoundException {
-        return surveyService.getSurveysByUserId(userId);
-    }
+//    @GetMapping("/surveys/user/{userId}")
+//    public List<Survey> getSurveysByUserId(@PathVariable(value = "userId") Long userId)
+//            throws ResourceNotFoundException {
+//        return surveyService.getSurveysByUserId(userId);
+//    }
 
     // Update a survey
     @PutMapping("/survey/{id}")

@@ -1,6 +1,7 @@
 package kakaq_be.kakaq_be.user.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kakaq_be.kakaq_be.survey.Domain.Survey;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.MediaType;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
-public class HttpControllerTest {
+public class UserController {
 
     @Autowired UserRepository userRepository;
     @RequestMapping("/user/register")
@@ -25,6 +28,12 @@ public class HttpControllerTest {
         userRepository.save(new_user);
         return 0;
     }
+
+    @GetMapping("/user/{userId}/surveys")
+    public List<Survey> getSurveyByUserId(@PathVariable Long userId) {
+        return userRepository.findSurveysByUserId(userId);
+    }
+
     String gpt_API_KEY = "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";
     @RequestMapping("/survey/create/chatbot")
     public String sendTopic(HttpServletRequest param) {
