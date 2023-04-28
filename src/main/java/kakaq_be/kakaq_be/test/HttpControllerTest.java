@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
+@RequestMapping("/api")
 public class HttpControllerTest {
 
-
-
     @Autowired UserRepository userRepository;
-    @RequestMapping("/api/user/register")
+    @RequestMapping("/user/register")
     public int signupTest(@RequestBody User rq_user){
         System.out.println(rq_user);
         User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail());
@@ -28,13 +27,8 @@ public class HttpControllerTest {
         userRepository.save(new_user);
         return 0;
     }
-
-
-
     String gpt_API_KEY = "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";
-
-    @GetMapping("/api/survey/create/chatbot")
-//    @SendTo("/topic/public")
+    @RequestMapping("/survey/create/chatbot")
     public String sendTopic(HttpServletRequest param) {
         System.out.println(param);
         String topic = param.getParameter("topic");
@@ -61,6 +55,7 @@ public class HttpControllerTest {
         // API 응답 결과 이거 format 만들어서 맞게 만들어야 함.
         return response.getBody();
     }
+
 
 
 
