@@ -13,7 +13,6 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/user?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults= UTF-8&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
@@ -34,6 +33,10 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+
+  kakao:
+    api:
+      key: 0fe37deeaccdff24161e7671384de7b9
 
 
 
