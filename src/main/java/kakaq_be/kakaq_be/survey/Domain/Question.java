@@ -22,9 +22,6 @@ public class Question {
     @Column(nullable = false, length = 50)
     private String text;
 
-    @Column(nullable = false)
-    private String public_state;
-
     @ManyToOne
     private QuestionType type;
 

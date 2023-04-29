@@ -27,6 +27,9 @@ public class Survey {
     @Column(nullable = false, length = 50)
     private String title;
 
+    @Column(nullable = false)
+    private String public_state;
+
     @ElementCollection
     private List<String> keyword;
 
