@@ -51,7 +51,7 @@ public class HttpControllerTest {
                 ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
 
         if (bCryptPasswordEncoder.matches(password,userEntity.getPassword())){
-            System.out.println(userEntity.getUsername()+"로그인성공");
+            System.out.println(userEntity.getUsername()+"님, 로그인성공");
             return userEntity.getUsername()+"/home";
         }else{
             System.out.println("로그인실패");
