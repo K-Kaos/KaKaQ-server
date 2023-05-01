@@ -1,8 +1,8 @@
 package kakaq_be.kakaq_be.test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kakaq_be.kakaq_be.user.domain.User;
-import kakaq_be.kakaq_be.user.repository.UserRepository;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

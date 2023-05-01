@@ -1,4 +1,4 @@
-package kakaq_be.kakaq_be.user.domain;
+package kakaq_be.kakaq_be.user.Domain;
 
 import jakarta.persistence.*;
 import lombok.*;

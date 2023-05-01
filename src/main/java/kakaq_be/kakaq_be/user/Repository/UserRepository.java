@@ -1,6 +1,6 @@
-package kakaq_be.kakaq_be.user.repository;
+package kakaq_be.kakaq_be.user.Repository;
 
-import kakaq_be.kakaq_be.user.domain.User;
+import kakaq_be.kakaq_be.user.Domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
