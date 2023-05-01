@@ -112,7 +112,7 @@ public class SurveyController {
     }
 
     String gpt_API_KEY = "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";
-    @GetMapping("/survey/create/chatbot")
+    @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {
         System.out.println(param);
         String topic = param.getParameter("topic");
