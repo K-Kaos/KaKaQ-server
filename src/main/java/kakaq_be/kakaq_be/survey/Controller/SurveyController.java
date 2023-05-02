@@ -1,5 +1,7 @@
 package kakaq_be.kakaq_be.survey.Controller;
+import kakaq_be.kakaq_be.survey.Domain.QuestionType;
 import kakaq_be.kakaq_be.survey.Repository.QuestionRepository;
+import kakaq_be.kakaq_be.survey.Repository.QuestionTypeRepository;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
@@ -51,6 +53,9 @@ public class SurveyController {
     @Autowired
     private ResponseService responseService;
 
+    @Autowired
+    QuestionTypeRepository questionTypeRepository;
+
     // Create a new survey
     @PostMapping("/survey/create")//chatbot topic쪽에서 submit 누르거나, basic에서 submit 누를때
     public String createSurvey(@RequestBody Survey survey) {
@@ -65,10 +70,17 @@ public class SurveyController {
         return Integer.toString(new_survey.getId());
     }
     @PostMapping("/survey/question")
-    public String createQuestion(@Valid @RequestBody Question question){
+    public String createQuestion(@RequestBody Question question){
         System.out.println(question);
         Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById((long)question.getSurvey().getId());
-        Question new_question = new Question(question.getQuestion_id(), question.getText(), question.getType(), question.getOptions(), question.getSurvey());
+        Survey surveyEntity = surveyEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
+       // Optional<QuestionType> typeEntityWrapper = questionRepository.findById(question.getType());
+       // QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 type을 찾을 수 없습니다."));
+
+        Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
+        QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
+        Question new_question = new Question(question.getQuestion_id(), question.getText(),typeEntity, question.getOptions(), surveyEntity);
         questionRepository.save(new_question);
         return Long.toString(new_question.getQuestion_id());
     }

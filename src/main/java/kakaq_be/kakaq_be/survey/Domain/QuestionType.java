@@ -25,4 +25,11 @@ public class QuestionType {
 
     @OneToMany(mappedBy = "type")
     private List<Question> questions;
+
+    @Builder
+    public QuestionType(long question_type_id, String name, List<Question> questions){
+        this.question_type_id = question_type_id;
+        this.name = name;
+        this.questions=questions;
+    }
 }

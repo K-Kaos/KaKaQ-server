@@ -26,6 +26,9 @@ public class Question {
     @JoinColumn(name = "question_type_id", nullable = false)
     private QuestionType type;
 
+//    @Column(nullable = false)
+//    private String type;
+
     @ElementCollection
     private List<String> options;
 
@@ -37,7 +40,7 @@ public class Question {
     private List<Response> responses;
 
     @Builder
-    public Question(long question_id, String text, QuestionType type,List<String> options, Survey survey){
+    public Question(Long question_id, String text, QuestionType type,List<String> options, Survey survey){
         this.question_id = question_id;
         this.options = options;
         this.text = text;
