@@ -46,9 +46,6 @@ public class SurveyController {
     UserRepository userRepository;
 
     @Autowired
-    SurveyRepository surveyRepository;
-
-    @Autowired
     private QuestionService questionService;
 
     @Autowired
