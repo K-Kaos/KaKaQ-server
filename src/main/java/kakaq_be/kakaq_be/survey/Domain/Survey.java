@@ -71,6 +71,7 @@ public class Survey {
         this.public_state = public_state;
         this.creator = creator;
         this.status = "true";//timestamp 보고 status를 자동으로 setting 되게끔 고쳐야함.
+
     }
 
 }

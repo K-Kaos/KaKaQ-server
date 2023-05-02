@@ -55,7 +55,7 @@ public class SurveyController {
     @PostMapping("/survey/create")//chatbot topic쪽에서 submit 누르거나, basic에서 submit 누를때
     public String createSurvey(@RequestBody Survey survey) {
         System.out.println(survey);
-        System.out.println(userRepository.findById(survey.getCreator().getId()));
+//        System.out.println(userRepository.findById(survey.getCreator().getId()));
         Optional<User> userEntityWrapper = userRepository.findById(survey.getCreator().getId());
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));

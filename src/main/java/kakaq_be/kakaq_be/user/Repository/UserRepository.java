@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, String>{
     List<Survey> findSurveysByUserId(@Param("userId") Long userId);
     public Optional<User> findByEmail(String email);
 
-    public Optional<User> findById(int id);
+    public Optional<User> findById(Long id);
 
 
 //    @Autowired
