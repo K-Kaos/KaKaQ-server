@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, String>{
     @Query("SELECT s FROM Survey s JOIN s.participants p WHERE p.id = :userId")
     List<Survey> findSurveysByUserId(@Param("userId") Long userId);
     public Optional<User> findByEmail(String email);
+
+    //mypage용 name으로 찾기
+    Optional<User> findByUsername(String username);
 }
