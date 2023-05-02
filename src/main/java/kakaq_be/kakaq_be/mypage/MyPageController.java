@@ -3,12 +3,6 @@ package kakaq_be.kakaq_be.mypage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import kakaq_be.kakaq_be.survey.Domain.Survey;
-import kakaq_be.kakaq_be.user.Domain.User;
-import kakaq_be.kakaq_be.user.Dto.UserDto;
-import kakaq_be.kakaq_be.user.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -26,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -42,6 +37,7 @@ public class MyPageController {
         return ResponseEntity.ok("{\"username\":\"" + user.getUsername() + "\"}");
     }
 
+    //------------------------------GPS
     @Value("0fe37deeaccdff24161e7671384de7b9")
     private String apiKey;
     @RequestMapping("/gps")//마이페이지에 현재 유저 위치 전송
@@ -69,7 +65,14 @@ public class MyPageController {
         JsonNode firstDocumentNode = documentsNode.get(0);
         JsonNode addressNode = firstDocumentNode.get("address");
         String region1depthName = addressNode.get("region_1depth_name").asText();
-        return region1depthName;
+        String region2depthName = addressNode.get("region_2depth_name").asText();
+        String[] Metropolitan = {"서울", "부산", "대구", "인천", "대전", "광주", "울산", "세종"};
+        List<String> MetroCity = new ArrayList<>(Arrays.asList(Metropolitan));
+        if(MetroCity.contains(region1depthName)) {
+            return region1depthName + "시";
+        }
+        else return region2depthName;
+
     }
 //    @RequestMapping("/participate") //참여한 설문조사list 가져오기
 //    public List<Survey> getParticipate(){}

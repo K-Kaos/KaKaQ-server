@@ -7,6 +7,9 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  error:
+    include-message: always
+    include-binding-errors: always
 
 spring:
   mvc:
