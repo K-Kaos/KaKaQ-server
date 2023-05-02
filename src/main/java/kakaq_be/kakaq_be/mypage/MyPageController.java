@@ -3,6 +3,11 @@ package kakaq_be.kakaq_be.mypage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kakaq_be.kakaq_be.survey.Domain.Survey;
+import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -27,6 +32,10 @@ import java.util.*;
 public class MyPageController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SurveyRepository surveyRepository;
+
     @PostMapping("/userInfo")
     public ResponseEntity<String> getLoggedInUser(@RequestBody Map<String, String> request) {
         String loggedInUser = request.get("user");
@@ -35,6 +44,17 @@ public class MyPageController {
                 ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
 
         return ResponseEntity.ok("{\"username\":\"" + user.getUsername() + "\"}");
+    }
+
+    //get logined user's created surveys
+    @GetMapping("/created")
+    public ResponseEntity<List<Survey>> getCreatedSurveys(@RequestParam String user) {
+        Optional<User> userEntityWrapper = userRepository.findByEmail(user);
+        User loggedInUser = userEntityWrapper.orElseThrow(
+                () -> new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다.")
+        );
+        List<Survey> createdSurveys = surveyRepository.findAllByCreator(loggedInUser);
+        return ResponseEntity.ok(createdSurveys);
     }
 
     //------------------------------GPS

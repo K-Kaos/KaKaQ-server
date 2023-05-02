@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, String>{
 //        User user = jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserMapper());
 //        return user;
 //    }
-}
+//}
     //mypage용 name으로 찾기
     Optional<User> findByUsername(String username);
 }
