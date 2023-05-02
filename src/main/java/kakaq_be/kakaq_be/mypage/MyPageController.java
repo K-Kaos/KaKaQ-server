@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,25 +25,21 @@ import org.springframework.http.MediaType;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/mypage")
 public class MyPageController {
+    @Autowired
     private UserRepository userRepository;
-    @GetMapping("/userInfo")
-    public ResponseEntity<UserDto> getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = auth.getName();
+    @PostMapping("/userInfo")
+    public ResponseEntity<String> getLoggedInUser(@RequestBody Map<String, String> request) {
+        String loggedInUser = request.get("user");
+        Optional<User> userEntityWrapper = userRepository.findByEmail(loggedInUser);
+        User user = userEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
 
-        User user = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        UserDto userDto = UserDto.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .build();
-
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok("{\"username\":\"" + user.getUsername() + "\"}");
     }
 
     @Value("0fe37deeaccdff24161e7671384de7b9")
