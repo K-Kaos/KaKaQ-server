@@ -5,19 +5,37 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.http.MediaType;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/mypage")
 public class MyPageController {
+    @Autowired
+    private UserRepository userRepository;
+    @PostMapping("/userInfo")
+    public ResponseEntity<String> getLoggedInUser(@RequestBody Map<String, String> request) {
+        String loggedInUser = request.get("user");
+        Optional<User> userEntityWrapper = userRepository.findByEmail(loggedInUser);
+        User user = userEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
 
+        return ResponseEntity.ok("{\"username\":\"" + user.getUsername() + "\"}");
+    }
 
     //------------------------------GPS
     @Value("0fe37deeaccdff24161e7671384de7b9")
