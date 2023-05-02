@@ -20,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column( name = "user_id" )
-    private int id;
+    private Long id;
 
     @Column(nullable = false, length = 20)
     private String username;
@@ -44,7 +44,7 @@ public class User {
 //    private Set<Survey> surveys_create;
 
     @Builder
-    public User(int id, String username, String password, String email){
+    public User(Long id, String username, String password, String email){
         this.id = id;
         this.username = username;
         this.password = password;

@@ -1,13 +1,19 @@
-package kakaq_be.kakaq_be.survey.Controller;
+package kakaq_be.kakaq_be.mypage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Dto.UserDto;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +28,23 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/mypage")
 public class MyPageController {
+    private UserRepository userRepository;
+    @GetMapping("/userInfo")
+    public ResponseEntity<UserDto> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        UserDto userDto = UserDto.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
+
+        return ResponseEntity.ok(userDto);
+    }
+
     @Value("0fe37deeaccdff24161e7671384de7b9")
     private String apiKey;
     @RequestMapping("/gps")//마이페이지에 현재 유저 위치 전송
