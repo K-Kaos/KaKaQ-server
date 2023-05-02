@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
@@ -51,6 +53,12 @@ public class MyPageController {
         String region1depthName = addressNode.get("region_1depth_name").asText();
         return region1depthName;
     }
+//    @RequestMapping("/user")
+//    public User sendUser(@RequestBody Long userId){
+//        System.out.println(UserRepository.findUserById(userId));
+//        return UserRepository.findUserById(userId);
+//
+//    }
 //    @RequestMapping("/participate") //참여한 설문조사list 가져오기
 //    public List<Survey> getParticipate(){}
 //
