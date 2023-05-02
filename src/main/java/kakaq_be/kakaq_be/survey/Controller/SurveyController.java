@@ -1,4 +1,10 @@
 package kakaq_be.kakaq_be.survey.Controller;
+
+import kakaq_be.kakaq_be.survey.Repository.QuestionRepository;
+import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
+import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import org.springframework.web.client.RestTemplate;
 import kakaq_be.kakaq_be.survey.Domain.Question;
@@ -37,15 +43,31 @@ public class SurveyController {
     private SurveyService surveyService;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    SurveyRepository surveyRepository;
+
+    @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    QuestionRepository questionRepository;
     @Autowired
     private ResponseService responseService;
 
     // Create a new survey
-    @PostMapping("/survey/create")
-    public Survey createSurvey(@Valid @RequestBody Survey survey) {
-        return surveyService.createSurvey(survey);
+    @PostMapping("/survey/create")//chatbot topic쪽에서 submit 누르거나, basic에서 submit 누를때
+    public String createSurvey(@RequestBody Survey survey) {
+        System.out.println(survey);
+//        System.out.println(userRepository.findById(survey.getCreator().getId()));
+        Optional<User> userEntityWrapper = userRepository.findById((long) survey.getCreator().getId());
+        User userEntity = userEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
+        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublic_state(), userEntity);
+        surveyRepository.save(new_survey);
+//        Survey new_survey = new Survey(survey.getId(), );
+        return Integer.toString(new_survey.getId());
     }
 
     // Get all surveys
