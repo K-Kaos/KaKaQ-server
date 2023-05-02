@@ -32,3 +32,6 @@ public interface UserRepository extends JpaRepository<User, String>{
 //        return user;
 //    }
 }
+    //mypage용 name으로 찾기
+    Optional<User> findByUsername(String username);
+}

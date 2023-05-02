@@ -1,9 +1,11 @@
 package kakaq_be.kakaq_be.survey.Controller;
+
 import kakaq_be.kakaq_be.survey.Repository.QuestionRepository;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import org.springframework.web.client.RestTemplate;
 import kakaq_be.kakaq_be.survey.Domain.Question;
 import kakaq_be.kakaq_be.survey.Domain.Response;
@@ -34,6 +36,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class SurveyController {
+    @Autowired
+    private SurveyRepository surveyRepository;
+
     @Autowired
     private SurveyService surveyService;
 
