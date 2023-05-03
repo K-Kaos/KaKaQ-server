@@ -46,6 +46,13 @@ public class Survey {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date endDate;
 
+    // survey status 자동갱신 함수
+    public void updateStatusIfExpired() {
+        if (this.endDate.before(new Date())) {
+            this.status = "false";
+        }
+    }
+
     @Column
     private String city;
 
