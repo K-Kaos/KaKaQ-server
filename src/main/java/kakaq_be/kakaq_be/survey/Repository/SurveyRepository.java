@@ -14,6 +14,9 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     public Optional<Survey> findSurveyById(Long id);
     Survey findById(long id);
 
+    //공개 설문 찾기
+    List<Survey> findAllByPublicState(String public_state);
+
 
 
 }

@@ -30,7 +30,7 @@ public class Survey {
     private String title;
 
     @Column(nullable = false)
-    private String public_state;
+    private String publicState;
 
     @ElementCollection
     private List<String> keyword;
@@ -62,13 +62,13 @@ public class Survey {
     private List<Response> responses;
 
     @Builder
-    public Survey(int survey_id, String title, String city, Date start_date, Date end_date, String public_state, User creator){
+    public Survey(int survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator){
         this.id = survey_id;
         this.title = title;
         this.city = city;
         this.endDate = end_date;
         this.startDate = start_date;
-        this.public_state = public_state;
+        this.publicState = publicState;
         this.creator = creator;
         this.status = "true";//timestamp 보고 status를 자동으로 setting 되게끔 고쳐야함.
 

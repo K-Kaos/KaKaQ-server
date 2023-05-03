@@ -61,7 +61,7 @@ public class SurveyController {
         Optional<User> userEntityWrapper = userRepository.findById((long) survey.getCreator().getId());
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
-        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublic_state(), userEntity);
+        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
         surveyRepository.save(new_survey);
 //        Survey new_survey = new Survey(survey.getId(), );
         return Integer.toString(new_survey.getId());
@@ -69,8 +69,9 @@ public class SurveyController {
 
     // Get all surveys
     @GetMapping("/surveys")
-    public List<Survey> getAllSurveys() {
-        return surveyService.getAllSurveys();
+    public List<Survey> getPublicSurveys() {
+        List<Survey> surveyEntityWrapper = surveyRepository.findAllByPublicState("public");
+        return surveyEntityWrapper;
     }
 
     //survey URL share
