@@ -67,7 +67,7 @@ public class SurveyController {
         return Integer.toString(new_survey.getId());
     }
 
-    // Get all surveys
+    // Get public surveys
     @GetMapping("/surveys")
     public List<Survey> getPublicSurveys() {
         List<Survey> surveyEntityWrapper = surveyRepository.findAllByPublicState("public");
