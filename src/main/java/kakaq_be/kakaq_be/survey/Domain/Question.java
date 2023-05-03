@@ -42,9 +42,9 @@ public class Question {
     @Builder
     public Question(Long question_id, String text, QuestionType type,List<String> options, Survey survey){
         this.question_id = question_id;
-        this.options = options;
         this.text = text;
         this.type = type;
+        this.options = options;
         this.survey = survey;
     }
 

@@ -9,31 +9,31 @@ server:
       force: true
 
 spring:
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
-
+#  sql:
+#    init:
+#      mode: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/user?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults= UTF-8&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/user?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
     username: root
     password: 1111
-
   jpa:
     open-in-view: true
     hibernate:
       ddl-auto: create #server 첫 시작: create, 이후: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      use-new-id-generator-mappings: false
+    #      use-new-id-generator-mappings: false
     show-sql: true
     properties:
       hibernate.format_sql: true
 
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
   jackson:
     serialization:
       fail-on-empty-beans: false
-
-
 

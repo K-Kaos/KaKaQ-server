@@ -79,8 +79,10 @@ public class SurveyController {
        // QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 type을 찾을 수 없습니다."));
 
         Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
+
         QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
-        Question new_question = new Question(question.getQuestion_id(), question.getText(),typeEntity, question.getOptions(), surveyEntity);
+        Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
+        System.out.println(new_question);
         questionRepository.save(new_question);
         return Long.toString(new_question.getQuestion_id());
     }
