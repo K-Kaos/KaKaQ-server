@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
@@ -56,6 +58,7 @@ public class MyPageController {
         List<Survey> createdSurveys = surveyRepository.findAllByCreator(loggedInUser);
         return ResponseEntity.ok(createdSurveys);
     }
+
 
     //------------------------------GPS
     @Value("0fe37deeaccdff24161e7671384de7b9")
