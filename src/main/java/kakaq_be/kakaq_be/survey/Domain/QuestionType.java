@@ -18,11 +18,18 @@ import java.util.List;
 public class QuestionType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long question_type_id;
 
     @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "type")
     private List<Question> questions;
+
+    @Builder
+    public QuestionType(long question_type_id, String name, List<Question> questions){
+        this.question_type_id = question_type_id;
+        this.name = name;
+        this.questions=questions;
+    }
 }
