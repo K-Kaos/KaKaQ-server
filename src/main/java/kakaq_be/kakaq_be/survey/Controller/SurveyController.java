@@ -58,16 +58,15 @@ public class SurveyController {
     QuestionTypeRepository questionTypeRepository;
 
     // Create a new survey
-    @PostMapping("/survey/create")//chatbot topic쪽에서 submit 누르거나, basic에서 submit 누를때
+    @PostMapping("/survey/create")//submit누르면
     public String createSurvey(@RequestBody Survey survey) {
         System.out.println(survey);
-//        System.out.println(userRepository.findById(survey.getCreator().getId()));
-        Optional<User> userEntityWrapper = userRepository.findById(survey.getCreator().getId());
+        Optional<User> userEntityWrapper = userRepository.findByEmail(survey.getCreator().getEmail());
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
         Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
+        System.out.println(new_survey);
         surveyRepository.save(new_survey);
-//        Survey new_survey = new Survey(survey.getId(), );
         return Integer.toString(new_survey.getId());
     }
 
@@ -78,11 +77,7 @@ public class SurveyController {
         Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById((long)question.getSurvey().getId());
         Survey surveyEntity = surveyEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
-        // Optional<QuestionType> typeEntityWrapper = questionRepository.findById(question.getType());
-        // QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 type을 찾을 수 없습니다."));
-
         Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
-
         QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
         Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
         System.out.println(new_question);
@@ -166,7 +161,7 @@ public class SurveyController {
         return responseService.getAllResponsesForSurvey(surveyId);
     }
 
-    String gpt_API_KEY = "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";
+    String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {
         System.out.println(param);

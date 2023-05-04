@@ -67,36 +67,5 @@ public class UserController {
     }
 
 
-    String gpt_API_KEY = "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";
-    @RequestMapping("/survey/create/chatbot")
-    public String sendTopic(HttpServletRequest param) {
-        System.out.println(param);
-        String topic = param.getParameter("topic");
-        //api에 요청 헤더
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + gpt_API_KEY);
-        //이 아래 url로 모델 바꿀수 있음.
-        String url = "https://api.openai.com/v1/engines/text-davinci-003/completions";
-
-        // 보낼 본문 데이터 설정
-        System.out.println(topic);
-        String prompt = topic + "에 대한 설문조사 질문지 폼을 객관식 질문으로 5개 만들어주는데, 선택지는 1, 2, 3, 4와 마지막 5.기타로 해줘";
-        System.out.println(prompt);
-        String requestBody = "{\"prompt\":\"" + prompt + "\",\"max_tokens\":3900,\"temperature\":0.7}";
-        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-
-        // API에 요청
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-//        ChatMessage responseChat = new ChatMessage();
-        System.out.println(response.getBody());
-
-        // API 응답 결과 이거 format 만들어서 맞게 만들어야 함.
-        return response.getBody();
-    }
-
-
-
 
 }
