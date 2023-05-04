@@ -26,10 +26,10 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: validate #server 첫 시작: create, 이후: validate
+      ddl-auto: create #server 첫 시작: create, 이후: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      use-new-id-generator-mappings: false
+    #      use-new-id-generator-mappings: false
     show-sql: true
     properties:
       hibernate.format_sql: true
@@ -37,6 +37,3 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-
-
-
