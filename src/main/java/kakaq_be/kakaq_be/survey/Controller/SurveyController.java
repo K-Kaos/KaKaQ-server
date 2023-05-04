@@ -1,6 +1,8 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
+import kakaq_be.kakaq_be.survey.Domain.QuestionType;
 import kakaq_be.kakaq_be.survey.Repository.QuestionRepository;
+import kakaq_be.kakaq_be.survey.Repository.QuestionTypeRepository;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
@@ -52,13 +54,15 @@ public class SurveyController {
     QuestionRepository questionRepository;
     @Autowired
     private ResponseService responseService;
+    @Autowired
+    QuestionTypeRepository questionTypeRepository;
 
     // Create a new survey
     @PostMapping("/survey/create")//chatbot topic쪽에서 submit 누르거나, basic에서 submit 누를때
     public String createSurvey(@RequestBody Survey survey) {
         System.out.println(survey);
 //        System.out.println(userRepository.findById(survey.getCreator().getId()));
-        Optional<User> userEntityWrapper = userRepository.findById((long) survey.getCreator().getId());
+        Optional<User> userEntityWrapper = userRepository.findById(survey.getCreator().getId());
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
         Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
@@ -66,6 +70,26 @@ public class SurveyController {
 //        Survey new_survey = new Survey(survey.getId(), );
         return Integer.toString(new_survey.getId());
     }
+
+    // Create a new question
+    @PostMapping("/survey/question")
+    public String createQuestion(@RequestBody Question question){
+        System.out.println(question);
+        Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById((long)question.getSurvey().getId());
+        Survey surveyEntity = surveyEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
+        // Optional<QuestionType> typeEntityWrapper = questionRepository.findById(question.getType());
+        // QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 type을 찾을 수 없습니다."));
+
+        Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
+
+        QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
+        Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
+        System.out.println(new_question);
+        questionRepository.save(new_question);
+        return Long.toString(new_question.getQuestion_id());
+    }
+
 
     // Get public surveys
     @GetMapping("/surveys")
