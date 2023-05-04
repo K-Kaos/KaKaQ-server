@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.security.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class Survey {
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO )
     @Column( name = "survey_id" )
-    private int id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String title;
@@ -60,16 +61,18 @@ public class Survey {
     private String status;
 
     @OneToMany(mappedBy = "survey")
-    private Set<Question> questions;
+    private List<Question> questions = new ArrayList<>();
+
+
 
     @ManyToMany
-    private Set<User> participants;
+    private List<User> participants;
 
     @OneToMany(mappedBy = "survey")
     private List<Response> responses;
 
     @Builder
-    public Survey(int survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator){
+    public Survey(Long survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator){
         this.id = survey_id;
         this.title = title;
         this.city = city;
@@ -81,4 +84,11 @@ public class Survey {
 
     }
 
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
 }
