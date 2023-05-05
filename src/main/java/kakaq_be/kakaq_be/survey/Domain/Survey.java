@@ -65,8 +65,8 @@ public class Survey {
 
 
 
-    @ManyToMany
-    private List<User> participants;
+    @ManyToMany(mappedBy = "ptSurveys")
+    private Set<User> participants;
 
     @OneToMany(mappedBy = "survey")
     private List<Response> responses;
