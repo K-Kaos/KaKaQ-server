@@ -29,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,7 @@ public class SurveyController {
     QuestionTypeRepository questionTypeRepository;
 
     // Create a new survey
-    @PostMapping("/survey/create")//submit누르면
+    @PostMapping("/survey/create")//submit누르면 survey 채우는 곳
     public String createSurvey(@RequestBody Survey survey) {
         System.out.println(survey);
         Optional<User> userEntityWrapper = userRepository.findByEmail(survey.getCreator().getEmail());
@@ -67,14 +68,27 @@ public class SurveyController {
         Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
         System.out.println(new_survey);
         surveyRepository.save(new_survey);
-        return Integer.toString(new_survey.getId());
+        return Long.toString(new_survey.getId());
     }
-
     // Create a new question
+//    @PostMapping("/survey/question")
+//        public Question createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){//submit 누르면 question 채우는 곳+ survey에 question넣어줌
+//            System.out.println(question);
+//            Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(surveyId);
+//            Survey surveyEntity = surveyEntityWrapper.orElseThrow(
+//                    ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));//해당 질문에 해당하는 survey
+//            Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
+//            QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
+//            Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
+//            System.out.println(new_question);
+//            questionRepository.save(new_question);//question table채우기 완료
+//
+//            return new_question;
+//    }
     @PostMapping("/survey/question")
-    public String createQuestion(@RequestBody Question question){
+    public Long createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){
         System.out.println(question);
-        Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById((long)question.getSurvey().getId());
+        Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(surveyId);
         Survey surveyEntity = surveyEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
         Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
@@ -82,9 +96,41 @@ public class SurveyController {
         Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
         System.out.println(new_question);
         questionRepository.save(new_question);
-        return Long.toString(new_question.getQuestion_id());
+        return new_question.getQuestion_id();
     }
 
+//    public Survey updateSurveyQuestions(Long questionId,Long surveyId){
+//        Optional<Survey> surveyEntityWrapper= surveyRepository.findSurveyById(surveyId);
+//        Survey surveyEntity = surveyEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 survey을 찾을 수 없습니다."));
+//        List<Question> questions = surveyEntity.getQuestions();
+//        for (Question question : questions) {
+//            if (question.getQuestion_id() == null) { // 새로 추가된 질문인 경우
+//                question.setQuestion_id((long) (questions.size() + 1)); // 새로운 id 부여
+//            }
+//        }
+//        return surveyEntity;
+//    }
+
+    @PostMapping("survey/editquestions")
+    public String editSurveyQuestions(@RequestBody Question data, @RequestParam("surveyId") Long surveyId) {
+        Long question_index = data.getQuestion_id();
+        String answer = "fail";
+        Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
+        if (surveyOptional.isPresent()) {
+            Survey survey = surveyOptional.get();
+            Optional<Question> questionOptional = questionRepository.findById(question_index);
+            if (questionOptional.isPresent()) {
+                Question question = questionOptional.get();
+
+                // 가져온 Question 객체를 List<Question> questions 필드에 추가합니다.
+                survey.addQuestion(question);
+                answer = "success";
+            }
+            surveyRepository.save(survey);
+        }
+
+        return answer;
+    }
 
     // Get public surveys
     @GetMapping("/surveys")

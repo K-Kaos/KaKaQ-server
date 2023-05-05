@@ -1,10 +1,7 @@
 package kakaq_be.kakaq_be.survey.Domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table( name = "question" )
+@ToString(exclude = {"type", "survey", "responses"})
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,5 +45,7 @@ public class Question {
         this.options = options;
         this.survey = survey;
     }
+
+
 
 }
