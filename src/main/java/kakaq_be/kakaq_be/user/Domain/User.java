@@ -37,6 +37,14 @@ public class User {
     @CreatedDate
     private Timestamp createDate;
 
+    @ManyToMany
+    @JoinTable(
+            name = "participant",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "survey_id")
+    )
+    private Set<Survey> ptSurveys;
+
 //    @ManyToMany(mappedBy = "participants")
 //    private Set<Survey> surveys_participate;
 //

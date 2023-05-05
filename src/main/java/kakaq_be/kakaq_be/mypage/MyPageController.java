@@ -59,6 +59,17 @@ public class MyPageController {
         return ResponseEntity.ok(createdSurveys);
     }
 
+    // get logined user's participated surveys
+    @RequestMapping("/participated") //참여한 설문조사list 가져오기
+    public ResponseEntity<List<Survey>> getParticipatedS(@RequestParam String user){
+        Optional<User> userEntityWrapper = userRepository.findByEmail(user);
+        User loggedInUser = userEntityWrapper.orElseThrow(
+                () -> new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다.")
+        );
+        List<Survey> participatedSurveys = userRepository.findSurveysByUserId(loggedInUser.getId());
+        return ResponseEntity.ok(participatedSurveys);
+    }
+
 
     //------------------------------GPS
     @Value("0fe37deeaccdff24161e7671384de7b9")

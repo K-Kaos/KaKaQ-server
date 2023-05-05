@@ -11,18 +11,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String>{
 //    public boolean ExistsByUserEmailANDUserPassword(String userEmail, String userpassword);
 
-    // get surveys that the userId == survey's participant
+    // get logined user's participated surveys
     @Query("SELECT s FROM Survey s JOIN s.participants p WHERE p.id = :userId")
     List<Survey> findSurveysByUserId(@Param("userId") Long userId);
+
     public Optional<User> findByEmail(String email);
 
     public Optional<User> findById(Long id);
-
 
 //    @Autowired
 //    private JdbcTemplate jdbcTemplate;

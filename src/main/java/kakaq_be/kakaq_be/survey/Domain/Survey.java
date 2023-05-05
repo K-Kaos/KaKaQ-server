@@ -62,7 +62,7 @@ public class Survey {
     @OneToMany(mappedBy = "survey")
     private Set<Question> questions;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "ptSurveys")
     private Set<User> participants;
 
     @OneToMany(mappedBy = "survey")
