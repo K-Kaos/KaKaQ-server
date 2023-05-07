@@ -207,7 +207,8 @@ public class SurveyController {
         return responseService.getAllResponsesForSurvey(surveyId);
     }
 
-    String gpt_API_KEY = "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";
+//    String gpt_API_KEY = "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";
+    String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {
         System.out.println(param);
