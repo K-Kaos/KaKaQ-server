@@ -73,7 +73,8 @@ public class SurveyController {
     }
 
     @PostMapping("/survey/question")//Create new survey's questions
-    public Long createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){
+    public String createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){
+        System.out.println(surveyId);
         System.out.println(question);
         Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(surveyId);
         Survey surveyEntity = surveyEntityWrapper.orElseThrow(
@@ -83,7 +84,22 @@ public class SurveyController {
         Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
         System.out.println(new_question);
         questionRepository.save(new_question);
-        return new_question.getQuestion_id();
+
+        String answer = "fail";
+        Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
+        if (surveyOptional.isPresent()) {
+            Survey survey = surveyOptional.get();
+            Optional<Question> questionOptional = questionRepository.findById(new_question.getQuestion_id());
+            if (questionOptional.isPresent()) {
+                Question questionq = questionOptional.get();
+                survey.addQuestion(questionq);
+                answer = "success";
+            }
+            System.out.println(survey);
+            surveyRepository.save(survey);
+        }
+
+        return answer;
     }
 
 
@@ -100,6 +116,7 @@ public class SurveyController {
                 survey.addQuestion(question);
                 answer = "success";
             }
+            System.out.println(survey);
             surveyRepository.save(survey);
         }
         return answer;
