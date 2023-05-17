@@ -1,11 +1,10 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
 import kakaq_be.kakaq_be.survey.Domain.QuestionType;
-import kakaq_be.kakaq_be.survey.Repository.QuestionRepository;
-import kakaq_be.kakaq_be.survey.Repository.QuestionTypeRepository;
-import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
+import kakaq_be.kakaq_be.survey.Repository.*;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
+import kakaq_be.kakaq_be.user.Service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import org.springframework.web.client.RestTemplate;
@@ -36,14 +35,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api")
 public class SurveyController {
+
+
     @Autowired
     private SurveyRepository surveyRepository;
 
     @Autowired
     private SurveyService surveyService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     UserRepository userRepository;
@@ -58,78 +63,54 @@ public class SurveyController {
     @Autowired
     QuestionTypeRepository questionTypeRepository;
 
+    @Autowired
+    ResponseRepository responseRepository;
+
     // Create a new survey
-    @PostMapping("/survey/create")//submit누르면 survey 채우는 곳
+    @PostMapping("/survey/create")//Create new survey
     public String createSurvey(@RequestBody Survey survey) {
-        System.out.println(survey);
-        Optional<User> userEntityWrapper = userRepository.findByEmail(survey.getCreator().getEmail());
-        User userEntity = userEntityWrapper.orElseThrow(
-                ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
+        User userEntity = userService.findUserfromSurvey(survey.getCreator().getEmail());
         Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
-        System.out.println(new_survey);
         surveyRepository.save(new_survey);
         return Long.toString(new_survey.getId());
     }
-    // Create a new question
-//    @PostMapping("/survey/question")
-//        public Question createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){//submit 누르면 question 채우는 곳+ survey에 question넣어줌
-//            System.out.println(question);
-//            Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(surveyId);
-//            Survey surveyEntity = surveyEntityWrapper.orElseThrow(
-//                    ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));//해당 질문에 해당하는 survey
-//            Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
-//            QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
-//            Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
-//            System.out.println(new_question);
-//            questionRepository.save(new_question);//question table채우기 완료
-//
-//            return new_question;
-//    }
-    @PostMapping("/survey/question")
-    public Long createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){
-        System.out.println(question);
-        Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(surveyId);
-        Survey surveyEntity = surveyEntityWrapper.orElseThrow(
-                ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
-        Optional<QuestionType> typeEntityWrapper = questionTypeRepository.findQuestionTypeByName(question.getType().getName());
-        QuestionType typeEntity = typeEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 name을 가진 type을 찾을 수 없습니다."));
+
+    @PostMapping("/survey/question")//Create new survey's questions
+    public String createQuestion(@RequestBody Question question, @RequestParam("surveyId") Long surveyId){
+
+        //fill new question to question table
+        Survey surveyEntity = surveyService.getSurveyById(surveyId);
+        QuestionType typeEntity = questionService.getQuestiontypeByName(question.getType().getName());
         Question new_question = new Question(question.getQuestion_id(),question.getText(),typeEntity, question.getOptions(), surveyEntity);
-        System.out.println(new_question);
         questionRepository.save(new_question);
-        return new_question.getQuestion_id();
-    }
 
-//    public Survey updateSurveyQuestions(Long questionId,Long surveyId){
-//        Optional<Survey> surveyEntityWrapper= surveyRepository.findSurveyById(surveyId);
-//        Survey surveyEntity = surveyEntityWrapper.orElseThrow(() -> new UsernameNotFoundException("해당 id을 가진 survey을 찾을 수 없습니다."));
-//        List<Question> questions = surveyEntity.getQuestions();
-//        for (Question question : questions) {
-//            if (question.getQuestion_id() == null) { // 새로 추가된 질문인 경우
-//                question.setQuestion_id((long) (questions.size() + 1)); // 새로운 id 부여
-//            }
-//        }
-//        return surveyEntity;
-//    }
-
-    @PostMapping("survey/editquestions")
-    public String editSurveyQuestions(@RequestBody Question data, @RequestParam("surveyId") Long surveyId) {
-        Long question_index = data.getQuestion_id();
+        //update survey's questions column with new question
         String answer = "fail";
         Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
         if (surveyOptional.isPresent()) {
             Survey survey = surveyOptional.get();
-            Optional<Question> questionOptional = questionRepository.findById(question_index);
+            Optional<Question> questionOptional = questionRepository.findById(new_question.getQuestion_id());
             if (questionOptional.isPresent()) {
-                Question question = questionOptional.get();
-
-                // 가져온 Question 객체를 List<Question> questions 필드에 추가합니다.
-                survey.addQuestion(question);
+                Question questionq = questionOptional.get();
+                survey.addQuestion(questionq);
                 answer = "success";
             }
             surveyRepository.save(survey);
         }
-
         return answer;
+    }
+
+
+
+    //participate the survey, fill the response table
+    @PostMapping("/survey/participate")
+    public String surveyParticipate(@RequestBody Response response, @RequestParam("surveyId") Long surveyId, @RequestParam("questionId") Long questionId){
+        Survey surveyEntity = surveyService.getSurveyById(surveyId);
+        Question questionEntity = questionService.getQuestionById(questionId);
+        User userEntity = userService.findUserfromSurvey(response.getUser().getEmail());
+        Response new_response = new Response(response.getResponse_id(), response.getText(), questionEntity, surveyEntity, userEntity);
+        responseRepository.save(new_response);
+        return Long.toString(new_response.getResponse_id());
     }
 
     // Get public surveys
@@ -211,9 +192,7 @@ public class SurveyController {
     String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {
-        System.out.println(param);
         String topic = param.getParameter("topic");
-        //api에 요청 헤더
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + gpt_API_KEY);
@@ -230,10 +209,8 @@ public class SurveyController {
         // API에 요청
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-//        ChatMessage responseChat = new ChatMessage();
         System.out.println(response.getBody());
 
-        // API 응답 결과 이거 format 만들어서 맞게 만들어야 함.
         return response.getBody();
     }
 

@@ -63,8 +63,6 @@ public class Survey {
     @OneToMany(mappedBy = "survey")
     private List<Question> questions = new ArrayList<>();
 
-
-
     @ManyToMany(mappedBy = "ptSurveys")
     private Set<User> participants;
 
