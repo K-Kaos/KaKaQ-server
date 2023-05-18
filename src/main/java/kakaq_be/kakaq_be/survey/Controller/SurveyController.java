@@ -146,7 +146,10 @@ public class SurveyController {
     @PutMapping("/survey/{id}")
     public ResponseEntity<Survey> updateSurvey(@PathVariable(value = "id") Long surveyId,
                                                @Valid @RequestBody Survey survey) throws ResourceNotFoundException {
+        //설문의 질문삭제 - 설문 업데이트 - 퀘스쳔 생성, 연결
+        surveyService.removeQuestionFromSurvey(surveyId);
         Survey updatedSurvey = surveyService.updateSurvey(surveyId, survey);
+        //퀘스천 생성 아직 안함!!!!!!!
         return ResponseEntity.ok(updatedSurvey);
     }
 

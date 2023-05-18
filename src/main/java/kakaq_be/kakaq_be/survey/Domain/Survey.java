@@ -60,7 +60,7 @@ public class Survey {
     @Column(nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.REMOVE)
     private List<Question> questions = new ArrayList<>();
 
     @ManyToMany(mappedBy = "ptSurveys")
