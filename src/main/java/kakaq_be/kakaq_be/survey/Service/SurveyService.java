@@ -47,7 +47,7 @@ public class SurveyService {
     public Survey updateSurvey(Long surveyId, Survey surveyDetails) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
         survey.setTitle(surveyDetails.getTitle());
-        survey.setKeyword(surveyDetails.getKeyword());
+        // survey.setKeyword(surveyDetails.getKeyword());
         survey.setQuestions(surveyDetails.getQuestions());
         return surveyRepository.save(survey);
     }
@@ -57,4 +57,10 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
         surveyRepository.delete(survey);
     }
+
+    // Search keyword
+    public List<Survey> searchSurveys(String keyword) {
+        return surveyRepository.findByKeywordsContaining(keyword);
+    }
+
 }
