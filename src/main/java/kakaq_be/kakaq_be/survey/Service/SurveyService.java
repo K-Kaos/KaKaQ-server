@@ -88,5 +88,9 @@ public class SurveyService {
         surveyRepository.delete(survey);
     }
 
+    // Search keyword
+    public List<Survey> searchSurveys(String keyword) {
+        return surveyRepository.findByKeywordsContaining(keyword);
+    }
 
 }

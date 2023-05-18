@@ -23,7 +23,7 @@ import java.util.Set;
 @Table( name = "survey" )
 public class Survey {
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     @Column( name = "survey_id" )
     private Long id;
 
@@ -32,9 +32,6 @@ public class Survey {
 
     @Column(nullable = false)
     private String publicState;
-
-    @ElementCollection
-    private List<String> keyword;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -70,7 +67,7 @@ public class Survey {
     private List<Response> responses;
 
     @Builder
-    public Survey(Long survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator){
+    public Survey(Long survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator, List<String> keywords){
         this.id = survey_id;
         this.title = title;
         this.city = city;
@@ -78,9 +75,10 @@ public class Survey {
         this.startDate = start_date;
         this.publicState = publicState;
         this.creator = creator;
-        this.status = "true";//timestamp 보고 status를 자동으로 setting 되게끔 고쳐야함.
-
+        this.status = "true"; // timestamp 보고 status를 자동으로 setting 되게끔 고쳐야함.
+        this.keywords = keywords; // FIX: Change 'keyword' to 'keywords'
     }
+
 
     public void addQuestion(Question question) {
         questions.add(question);
@@ -88,5 +86,18 @@ public class Survey {
 
     public List<Question> getQuestions() {
         return questions;
+    }
+
+    @ElementCollection
+    @CollectionTable(name = "keywords", joinColumns = @JoinColumn(name = "survey_id"))
+    @Column(name = "keyword")
+    private List<String> keywords;
+
+    public List<String> getKeywords() { // FIX: Change 'getKeyword' to 'getKeywords'
+        return keywords;
+    }
+
+    public void setKeywords(List<String> keywords) { // FIX: Add this setter method if it doesn't exist already
+        this.keywords = keywords;
     }
 }

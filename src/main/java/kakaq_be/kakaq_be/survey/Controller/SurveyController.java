@@ -67,10 +67,18 @@ public class SurveyController {
     ResponseRepository responseRepository;
 
     // Create a new survey
-    @PostMapping("/survey/create")//Create new survey
+    @PostMapping("/survey/create")
     public String createSurvey(@RequestBody Survey survey) {
-        User userEntity = userService.findUserfromSurvey(survey.getCreator().getEmail());
-        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
+        System.out.println(survey);
+
+        Optional<User> userEntityWrapper = userRepository.findByEmail(survey.getCreator().getEmail());
+        User userEntity = userEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
+
+        // FIX: Use getKeywords() method instead of getKeyword()
+        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity, survey.getKeywords());
+
+        System.out.println(new_survey);
         surveyRepository.save(new_survey);
         return Long.toString(new_survey.getId());
     }
@@ -189,6 +197,13 @@ public class SurveyController {
     public List<Response> getAllResponsesForSurvey(@PathVariable(value = "id") Long surveyId)
             throws ResourceNotFoundException {
         return responseService.getAllResponsesForSurvey(surveyId);
+    }
+
+    // Search surveys with keyword
+    @GetMapping("/search")
+    public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+        List<Survey> surveys = surveyService.searchSurveys(keyword);
+        return ResponseEntity.ok(surveys);
     }
 
 //    String gpt_API_KEY = "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";

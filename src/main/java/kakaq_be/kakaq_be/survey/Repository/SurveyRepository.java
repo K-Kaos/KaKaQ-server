@@ -17,7 +17,8 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     //공개 설문 찾기
     List<Survey> findAllByPublicState(String public_state);
 
-
+    // Search surveys with keyword
+    List<Survey> findByKeywordsContaining(String keyword);
 
 }
 
