@@ -24,9 +24,6 @@ public class Question {
     @JoinColumn(name = "question_type_id", nullable = false)
     private QuestionType type;
 
-//    @Column(nullable = false)
-//    private String type;
-
     @ElementCollection
     private List<String> options;
 
@@ -45,7 +42,6 @@ public class Question {
         this.options = options;
         this.survey = survey;
     }
-
 
 
 }

@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
 @Entity
 @Table( name = "response" )
 public class Response {
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO)
-    private Long id;
+    private Long response_id;
 
 //    @Column( name = "fill_date", insertable = false)
 //    private Date fillDate;
@@ -32,5 +32,16 @@ public class Response {
 
     @ManyToOne
     private User user;
+
+    @Builder
+    public Response(Long response_id, String text, Question question, Survey survey, User user){
+        this.response_id = response_id;
+        this.text = text;
+        this.question = question;
+        this.survey = survey;
+        this.user = user;
+    }
+
+
 
 }

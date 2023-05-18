@@ -70,11 +70,9 @@ public class MyPageController {
         return ResponseEntity.ok(participatedSurveys);
     }
 
-
-    //------------------------------GPS
     @Value("0fe37deeaccdff24161e7671384de7b9")
     private String apiKey;
-    @RequestMapping("/gps")//마이페이지에 현재 유저 위치 전송
+    @RequestMapping("/gps")//Get user's current location
     public String sendGPS(@RequestBody  Map<String, Float> gpsData) throws JsonProcessingException {
         Float latitude = gpsData.get("latitude");
         Float longitude = gpsData.get("longitude");
@@ -83,18 +81,13 @@ public class MyPageController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + apiKey);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        System.out.println(entity);
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
         String result = response.getBody();
-        System.out.println(result);
-
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(result);
-
         JsonNode documentsNode = rootNode.get("documents");
         JsonNode firstDocumentNode = documentsNode.get(0);
         JsonNode addressNode = firstDocumentNode.get("address");
@@ -106,7 +99,6 @@ public class MyPageController {
             return region1depthName + "시";
         }
         else return region2depthName;
-
     }
 //    @RequestMapping("/participate") //참여한 설문조사list 가져오기
 //    public List<Survey> getParticipate(){}
