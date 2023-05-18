@@ -65,7 +65,7 @@ public class SurveyController {
         Optional<User> userEntityWrapper = userRepository.findByEmail(survey.getCreator().getEmail());
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
-        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
+        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getKeyword(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity);
         System.out.println(new_survey);
         surveyRepository.save(new_survey);
         return Long.toString(new_survey.getId());
@@ -207,7 +207,23 @@ public class SurveyController {
         return responseService.getAllResponsesForSurvey(surveyId);
     }
 
-//    String gpt_API_KEY = "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";
+    // Get search result list
+    @GetMapping("/surveys/search")
+    public List<Survey> getSearchSurvey(@RequestParam(required = false) String keyword) {
+        List<Survey> surveyList;
+
+        if (keyword == null || keyword.isEmpty()) {
+            surveyList = surveyRepository.findAllByPublicState("public");
+        } else {
+            surveyList = surveyRepository.findByKeyword_KeywordContainingIgnoreCaseAndPublicState(keyword, "public");
+        }
+
+        return surveyList;
+    }
+
+
+
+    //    String gpt_API_KEY = "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";
     String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {

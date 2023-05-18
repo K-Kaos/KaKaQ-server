@@ -20,11 +20,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table( name = "survey" )
+@Table(name = "survey")
 public class Survey {
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
-    @Column( name = "survey_id" )
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "survey_id")
     private Long id;
 
     @Column(nullable = false, length = 50)
@@ -33,8 +33,8 @@ public class Survey {
     @Column(nullable = false)
     private String publicState;
 
-    @ElementCollection
-    private List<String> keyword;
+    @OneToMany(mappedBy = "survey")
+    private List<Keyword> keyword;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,6 +46,7 @@ public class Survey {
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date endDate;
+
 
     // survey status 자동갱신 함수
     public void updateStatusIfExpired() {
@@ -64,7 +65,6 @@ public class Survey {
     private List<Question> questions = new ArrayList<>();
 
 
-
     @ManyToMany(mappedBy = "ptSurveys")
     private Set<User> participants;
 
@@ -72,9 +72,10 @@ public class Survey {
     private List<Response> responses;
 
     @Builder
-    public Survey(Long survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator){
+    public Survey(Long survey_id, String title, List<Keyword> keyword, String city, Date start_date, Date end_date, String publicState, User creator) {
         this.id = survey_id;
         this.title = title;
+        this.keyword = keyword;
         this.city = city;
         this.endDate = end_date;
         this.startDate = start_date;

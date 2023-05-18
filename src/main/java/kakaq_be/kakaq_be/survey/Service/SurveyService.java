@@ -57,4 +57,10 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(() -> new ResourceNotFoundException("Survey not found for this id :: " + surveyId));
         surveyRepository.delete(survey);
     }
+
+    // Search keyword
+    public List<Survey> searchSurvey(String keyword){
+        return surveyRepository.findByKeyword_KeywordContainingIgnoreCaseAndPublicState(keyword, "public");
+    }
+
 }
