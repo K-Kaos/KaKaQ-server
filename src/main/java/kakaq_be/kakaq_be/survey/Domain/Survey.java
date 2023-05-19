@@ -30,6 +30,9 @@ public class Survey {
     @Column(nullable = false, length = 50)
     private String title;
 
+    @Column
+    private String category;
+
     @Column(nullable = false)
     private String publicState;
 
@@ -67,9 +70,10 @@ public class Survey {
     private List<Response> responses;
 
     @Builder
-    public Survey(Long survey_id, String title, String city, Date start_date, Date end_date, String publicState, User creator, List<String> keywords){
+    public Survey(Long survey_id, String title, String category, String city, Date start_date, Date end_date, String publicState, User creator, List<String> keywords){
         this.id = survey_id;
         this.title = title;
+        this.category = category;
         this.city = city;
         this.endDate = end_date;
         this.startDate = start_date;
