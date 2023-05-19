@@ -1,6 +1,7 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
 import kakaq_be.kakaq_be.survey.Domain.QuestionType;
+import kakaq_be.kakaq_be.survey.Dto.*;
 import kakaq_be.kakaq_be.survey.Repository.*;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
@@ -11,9 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import kakaq_be.kakaq_be.survey.Domain.Question;
 import kakaq_be.kakaq_be.survey.Domain.Response;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
-import kakaq_be.kakaq_be.survey.Dto.QuestionDto;
-import kakaq_be.kakaq_be.survey.Dto.ResponseDto;
-import kakaq_be.kakaq_be.survey.Dto.SurveyDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import kakaq_be.kakaq_be.survey.Service.QuestionService;
@@ -30,10 +28,7 @@ import org.springframework.http.HttpMethod;
 
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -65,6 +60,43 @@ public class SurveyController {
 
     @Autowired
     ResponseRepository responseRepository;
+
+    //test get survey+question
+    @GetMapping("/surveys/test/{id}")
+    public SurveyDetailsDto getSurvey(@PathVariable Long id){
+        Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(id);
+        Survey survey = surveyEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
+
+        SurveyDetailsDto surveyDTO = new SurveyDetailsDto();
+        surveyDTO.setId(survey.getId());
+        surveyDTO.setTitle(survey.getTitle());
+        surveyDTO.setPublicState(survey.getPublicState());
+        surveyDTO.setKeyword(survey.getKeyword());
+        surveyDTO.setCity(survey.getCity());
+        surveyDTO.setStatus(survey.getStatus());
+
+        List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
+        for (Question question : survey.getQuestions()) {
+            QuestionDetailsDto questionDTO = new QuestionDetailsDto();
+            questionDTO.setQuestion_id(question.getQuestion_id());
+            questionDTO.setText(question.getText());
+
+            QuestionType questionType = question.getType();
+            QuestionTypeDetailsDto questionTypeDTO = new QuestionTypeDetailsDto();
+            questionTypeDTO.setQuestion_type_id(questionType.getQuestion_type_id());
+            questionTypeDTO.setName(questionType.getName());
+
+            questionDTO.setType(questionTypeDTO);
+            questionDTO.setOptions(question.getOptions());
+
+            questionDTOs.add(questionDTO);
+        }
+
+        surveyDTO.setQuestions(questionDTOs);
+
+        return surveyDTO;
+    }
 
     // Create a new survey
     @PostMapping("/survey/create")//Create new survey
@@ -99,8 +131,6 @@ public class SurveyController {
         }
         return answer;
     }
-
-
 
     //participate the survey, fill the response table
     @PostMapping("/survey/participate")
@@ -149,7 +179,7 @@ public class SurveyController {
         //설문의 질문삭제 - 설문 업데이트 - 퀘스쳔 생성, 연결
         surveyService.removeQuestionFromSurvey(surveyId);
         Survey updatedSurvey = surveyService.updateSurvey(surveyId, survey);
-        //퀘스천 생성 아직 안함!!!!!!!
+        //퀘스천 생성 아직 안함!!!!!!! //프론트에서 퀘스쳔 생성 필요
         return ResponseEntity.ok(updatedSurvey);
     }
 

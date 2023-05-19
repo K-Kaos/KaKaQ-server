@@ -63,10 +63,10 @@ public class Survey {
     @OneToMany(mappedBy = "survey", cascade = CascadeType.REMOVE)
     private List<Question> questions = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "ptSurveys")
+    @ManyToMany(mappedBy = "ptSurveys") //Cascade remove 해도 되나???
     private Set<User> participants;
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.REMOVE)
     private List<Response> responses;
 
     @Builder
