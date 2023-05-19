@@ -4,6 +4,7 @@ import kakaq_be.kakaq_be.survey.Domain.QuestionType;
 import kakaq_be.kakaq_be.survey.Dto.*;
 import kakaq_be.kakaq_be.survey.Repository.*;
 import kakaq_be.kakaq_be.user.Domain.User;
+import kakaq_be.kakaq_be.user.Dto.UserDto;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
 import kakaq_be.kakaq_be.user.Service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -155,9 +156,23 @@ public class SurveyController {
 
     // Get public surveys
     @GetMapping("/surveys")
-    public List<Survey> getPublicSurveys() {
+    public List<SurveyDetailsDto> getPublicSurveys() {
         List<Survey> surveyEntityWrapper = surveyRepository.findAllByPublicState("public");
-        return surveyEntityWrapper;
+        List<SurveyDetailsDto> surveyDTOs = new ArrayList<>();
+
+        for(Survey survey : surveyEntityWrapper){
+            SurveyDetailsDto surveyDTO = new SurveyDetailsDto();
+            surveyDTO.setId(survey.getId());
+            surveyDTO.setTitle(survey.getTitle());
+            surveyDTO.setStartDate(survey.getStartDate());
+            surveyDTO.setEndDate(survey.getEndDate());
+            surveyDTO.setKeywords(survey.getKeywords());
+            User user = survey.getCreator();
+            surveyDTO.setCreator(user.getUsername());
+
+            surveyDTOs.add(surveyDTO);
+        }
+        return surveyDTOs;
     }
 
     //survey URL share
