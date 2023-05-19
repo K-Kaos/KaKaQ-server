@@ -74,7 +74,7 @@ public class SurveyService {
         Survey surveyEntity = surveyEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
         surveyEntity.setTitle(surveyDetails.getTitle());
-        surveyEntity.setKeyword(surveyDetails.getKeyword());
+        surveyEntity.setKeywords(surveyDetails.getKeywords());
         surveyEntity.setCity(surveyDetails.getCity());
         surveyEntity.setStartDate(surveyDetails.getStartDate());
         surveyEntity.setEndDate(surveyDetails.getEndDate());
