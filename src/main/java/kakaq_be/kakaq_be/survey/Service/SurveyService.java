@@ -12,9 +12,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -92,5 +94,18 @@ public class SurveyService {
     public List<Survey> searchSurveys(String keyword) {
         return surveyRepository.findByKeywordsContaining(keyword);
     }
+
+    // Filter and Sort by category
+    public List<Survey> sortSurveys(List<Survey> surveys, String filterCategory) {
+        System.out.println("All surveys: " + surveys);
+        List<Survey> filteredSurveys = surveys.stream()
+                .filter(survey -> survey.getCategory().equalsIgnoreCase(filterCategory))
+                .collect(Collectors.toList());
+        System.out.println("Filtered surveys: " + filteredSurveys);
+        return filteredSurveys.stream()
+                .sorted(Comparator.comparing(Survey::getEndDate))
+                .collect(Collectors.toList());
+    }
+
 
 }
