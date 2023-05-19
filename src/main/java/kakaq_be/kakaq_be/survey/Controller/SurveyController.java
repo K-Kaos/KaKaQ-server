@@ -76,7 +76,7 @@ public class SurveyController {
                 ()->new UsernameNotFoundException("해당 id을 가진 사용자를 찾을 수 없습니다."));
 
         // FIX: Use getKeywords() method instead of getKeyword()
-        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity, survey.getKeywords());
+        Survey new_survey = new Survey(survey.getId(), survey.getTitle(), survey.getCategory(), survey.getCity(), survey.getStartDate(), survey.getEndDate(), survey.getPublicState(), userEntity, survey.getKeywords());
 
         System.out.println(new_survey);
         surveyRepository.save(new_survey);
@@ -198,6 +198,19 @@ public class SurveyController {
             throws ResourceNotFoundException {
         return responseService.getAllResponsesForSurvey(surveyId);
     }
+
+    // Filter by category and Sort by end_date
+    @GetMapping("/surveys/filter")
+    public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
+        System.out.println("sortSurveys() called");
+        List<Survey> publicSurvey = surveyRepository.findAllByPublicState("public");
+        if (category != null) {
+            return surveyService.sortSurveys(publicSurvey, category);
+        }
+        System.out.println("There is no survey for this category!");
+        return publicSurvey;
+    }
+
 
     // Search surveys with keyword
     @GetMapping("/search")

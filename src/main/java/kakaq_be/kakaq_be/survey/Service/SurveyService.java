@@ -12,9 +12,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -74,7 +76,7 @@ public class SurveyService {
         Survey surveyEntity = surveyEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 id을 가진 survey를 찾을 수 없습니다."));
         surveyEntity.setTitle(surveyDetails.getTitle());
-        surveyEntity.setKeyword(surveyDetails.getKeyword());
+        surveyEntity.setKeywords(surveyDetails.getKeywords());
         surveyEntity.setCity(surveyDetails.getCity());
         surveyEntity.setStartDate(surveyDetails.getStartDate());
         surveyEntity.setEndDate(surveyDetails.getEndDate());
@@ -92,5 +94,18 @@ public class SurveyService {
     public List<Survey> searchSurveys(String keyword) {
         return surveyRepository.findByKeywordsContaining(keyword);
     }
+
+    // Filter and Sort by category
+    public List<Survey> sortSurveys(List<Survey> surveys, String filterCategory) {
+        System.out.println("All surveys: " + surveys);
+        List<Survey> filteredSurveys = surveys.stream()
+                .filter(survey -> survey.getCategory().equalsIgnoreCase(filterCategory))
+                .collect(Collectors.toList());
+        System.out.println("Filtered surveys: " + filteredSurveys);
+        return filteredSurveys.stream()
+                .sorted(Comparator.comparing(Survey::getEndDate))
+                .collect(Collectors.toList());
+    }
+
 
 }
