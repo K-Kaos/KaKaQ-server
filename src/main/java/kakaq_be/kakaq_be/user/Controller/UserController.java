@@ -51,9 +51,8 @@ public class UserController {
         System.out.println(response.getBody());
 
         return response.getBody();
-        //return "answer";
     }
-    @RequestMapping("/user/register")
+    @RequestMapping("/user/register")//나중에 유형 결과도 여기에 추가해야함.
     public String signup(@RequestBody User rq_user){
         try {
             System.out.println(rq_user);
@@ -81,7 +80,6 @@ public class UserController {
         Optional<User> userEntityWrapper = userRepository.findByEmail(email);
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
-
         if (bCryptPasswordEncoder.matches(password,userEntity.getPassword())){
             System.out.println(userEntity.getUsername()+"님, 로그인성공");
             return userEntity.getUsername()+"/home";
