@@ -62,8 +62,8 @@ public class SurveyController {
     @Autowired
     ResponseRepository responseRepository;
 
-    //test get survey+question
-    @GetMapping("/surveys/test/{id}")
+    //get survey+question
+    @GetMapping("/surveys/get/{id}")
     public SurveyDetailsDto getSurvey(@PathVariable Long id){
         Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(id);
         Survey survey = surveyEntityWrapper.orElseThrow(
@@ -75,7 +75,9 @@ public class SurveyController {
         surveyDTO.setPublicState(survey.getPublicState());
         surveyDTO.setKeywords(survey.getKeywords());
         surveyDTO.setCity(survey.getCity());
-        surveyDTO.setStatus(survey.getStatus());
+        surveyDTO.setStartDate(survey.getStartDate());
+        surveyDTO.setEndDate(survey.getEndDate());
+        surveyDTO.setCategory(survey.getCategory());
 
         List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
@@ -186,7 +188,7 @@ public class SurveyController {
             return ResponseEntity.notFound().build();
         }
         Survey survey = surveyOptional.get();
-        String surveyURL = String.format("https://localhost:8080/api/surveys/%d", survey.getId());
+        String surveyURL = String.format("https://localhost:8080/api/participate/%d", survey.getId());
         return ResponseEntity.ok(surveyURL);
     }
 
