@@ -208,7 +208,7 @@ public class SurveyController {
             return ResponseEntity.notFound().build();
         }
         Survey survey = surveyOptional.get();
-        String surveyURL = String.format("https://localhost:8080/api/participate/%d", survey.getId());
+        String surveyURL = String.format("http://localhost:3000/participate/%d", survey.getId());
         return ResponseEntity.ok(surveyURL);
     }
 
