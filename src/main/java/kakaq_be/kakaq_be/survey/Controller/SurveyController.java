@@ -1,6 +1,6 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
-import kakaq_be.kakaq_be.survey.Domain.QuestionType;
+import kakaq_be.kakaq_be.survey.Domain.*;
 import kakaq_be.kakaq_be.survey.Dto.*;
 import kakaq_be.kakaq_be.survey.Repository.*;
 import kakaq_be.kakaq_be.user.Domain.User;
@@ -10,9 +10,6 @@ import kakaq_be.kakaq_be.user.Service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import org.springframework.web.client.RestTemplate;
-import kakaq_be.kakaq_be.survey.Domain.Question;
-import kakaq_be.kakaq_be.survey.Domain.Response;
-import kakaq_be.kakaq_be.survey.Domain.Survey;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import kakaq_be.kakaq_be.survey.Service.QuestionService;
@@ -56,6 +53,8 @@ public class SurveyController {
     QuestionRepository questionRepository;
     @Autowired
     private ResponseService responseService;
+    @Autowired
+    ParticipantRepository participantRepository;
     @Autowired
     QuestionTypeRepository questionTypeRepository;
 
@@ -152,8 +151,29 @@ public class SurveyController {
         Question questionEntity = questionService.getQuestionById(questionId);
         User userEntity = userService.findUserfromSurvey(response.getUser().getEmail());
         Response new_response = new Response(response.getResponse_id(), response.getText(), questionEntity, surveyEntity, userEntity);
+
         responseRepository.save(new_response);
         return Long.toString(new_response.getResponse_id());
+    }
+
+    // 응답 시, Participant(참여자) 테이블에 Survey와 User의 아이디 저장
+    @PostMapping("/survey/participant")
+    public String AddSurveyParticipant(@RequestParam("surveyId") Long surveyId, @RequestParam("userEmail") String userEmail){
+        try{
+            Survey surveyEntity = surveyService.getSurveyById(surveyId);
+            User userEntity = userService.findUserfromSurvey(userEmail);
+            // 중복 체크
+            if (participantRepository.existsBySurveyAndUser(surveyEntity, userEntity)) {
+                return "duplicate";
+            }
+            Participant participant = new Participant();
+            participant.setSurvey(surveyEntity);
+            participant.setUser(userEntity);
+            participantRepository.save(participant);
+            return "ok";
+        }catch (Exception e) {
+            return "fail";
+        }
     }
 
     // Get public surveys
