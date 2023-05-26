@@ -157,7 +157,7 @@ public class SurveyController {
     }
 
     // 응답 시, Participant(참여자) 테이블에 Survey와 User의 아이디 저장
-    @PostMapping("/survey/participant")
+    @GetMapping("/survey/participant")
     public String AddSurveyParticipant(@RequestParam("surveyId") Long surveyId, @RequestParam("userEmail") String userEmail){
         try{
             Survey surveyEntity = surveyService.getSurveyById(surveyId);
