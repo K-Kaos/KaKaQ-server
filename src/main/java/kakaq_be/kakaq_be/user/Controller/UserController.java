@@ -28,6 +28,31 @@ public class UserController {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
+    String gpt_API_KEY = "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";
+    @GetMapping("/user/pt")//심리유형 테스트 시작
+    public String ptTest(){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + gpt_API_KEY);
+        //이 아래 url로 모델 바꿀수 있음.
+        String url = "https://api.openai.com/v1/engines/text-davinci-003/completions";
+
+        // 보낼 본문 데이터 설정
+        String prompt = "예/아니오로 대답 가능한 심리유형질문을 만들어 주는데 번호는 순서대로 q1.외향적인 사람, q2.내향적인 사람, q3.계획적인 사람, q4.즉흥적인 사람, q5.감정적인 사람, q6.사고적인 사람 임을 알 수 있도록 만들어주고 맞음은 각 질문의 사람에 가깝도록 해줘. 질문만 써주고 질문마다 줄바꿈 한번씩만 해줘";
+        System.out.println(prompt);
+        String requestBody = "{\"prompt\":\"" + prompt + "\",\"max_tokens\":3500,\"temperature\":0.7}";
+        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
+        // API에 요청
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        System.out.println(response.getBody());
+
+        return response.getBody();
+        //return "answer";
+    }
     @RequestMapping("/user/register")
     public String signup(@RequestBody User rq_user){
         try {
