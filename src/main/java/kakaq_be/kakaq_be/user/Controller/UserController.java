@@ -60,7 +60,7 @@ public class UserController {
             String rawPassword = rq_user.getPassword();
             String encPassword = bCryptPasswordEncoder.encode(rawPassword);
             rq_user.setPassword(encPassword);
-            User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail());
+            User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail(), rq_user.getRole());
             userRepository.save(new_user);
             return "/login";
         } catch (DataIntegrityViolationException e) {
