@@ -52,12 +52,12 @@ public class User {
 //    private Set<Survey> surveys_create;
 
     @Builder
-    public User(Long id, String username, String password, String email){
+    public User(Long id, String username, String password, String email, String role){
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = "student";
+        this.role = role;
         this.createDate = new Timestamp(System.currentTimeMillis());
     }
 
