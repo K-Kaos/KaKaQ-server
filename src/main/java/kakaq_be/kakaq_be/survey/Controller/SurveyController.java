@@ -269,16 +269,34 @@ public class SurveyController {
     }
 
     // Filter by category and Sort by end_date
+//    @GetMapping("/surveys/filter")
+//    public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
+//        System.out.println("sortSurveys() called");
+//        List<Survey> publicSurvey = surveyRepository.findAllByPublicState("public");
+//        if (category != null) {
+//            return surveyService.sortSurveys(publicSurvey, category);
+//        }
+//        System.out.println("There is no survey for this category!");
+//        return publicSurvey;
+//    }
     @GetMapping("/surveys/filter")
     public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
         System.out.println("sortSurveys() called");
-        List<Survey> publicSurvey = surveyRepository.findAllByPublicState("public");
+        System.out.println("category is: " + category);
+        List<Survey> publicSurveys = surveyRepository.findAllByPublicState("public");
+        // Check if category is provided and handle accordingly
         if (category != null) {
-            return surveyService.sortSurveys(publicSurvey, category);
+            List<Survey> publicSurveysByCategory = surveyService.sortSurveys(publicSurveys, category);
+            System.out.println("Filtered surveys by category: " + publicSurveysByCategory);
+            return publicSurveysByCategory;
         }
-        System.out.println("There is no survey for this category!");
-        return publicSurvey;
+
+        // No category provided, return all public surveys
+        System.out.println("All public surveys: " + publicSurveys);
+        return publicSurveys;
     }
+
+
 
 
     // Search surveys with keyword
