@@ -6,7 +6,11 @@ import kakaq_be.kakaq_be.user.Domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     boolean existsBySurveyAndUser(Survey survey, User user);
+
+    List<Participant> findByUserId(Long userId);
 }

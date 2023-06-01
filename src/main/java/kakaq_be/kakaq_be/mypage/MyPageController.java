@@ -3,16 +3,11 @@ package kakaq_be.kakaq_be.mypage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kakaq_be.kakaq_be.survey.Domain.Question;
-import kakaq_be.kakaq_be.survey.Domain.QuestionType;
-import kakaq_be.kakaq_be.survey.Domain.Response;
-import kakaq_be.kakaq_be.survey.Domain.Survey;
-import kakaq_be.kakaq_be.survey.Dto.QuestionDetailsDto;
-import kakaq_be.kakaq_be.survey.Dto.QuestionTypeDetailsDto;
-import kakaq_be.kakaq_be.survey.Dto.ResponseByQuestionDto;
+import kakaq_be.kakaq_be.survey.Domain.*;
+import kakaq_be.kakaq_be.survey.Dto.*;
+import kakaq_be.kakaq_be.survey.Repository.ParticipantRepository;
 import kakaq_be.kakaq_be.survey.Repository.ResponseRepository;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
-import kakaq_be.kakaq_be.survey.Dto.ResponseDto;
 import kakaq_be.kakaq_be.survey.Service.ResponseService;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
@@ -31,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -43,6 +39,9 @@ public class MyPageController {
 
     @Autowired
     private ResponseRepository responseRepository;
+
+    @Autowired
+    private ParticipantRepository participantRepository;
 
     @PostMapping("/userInfo")
     public ResponseEntity<String> getLoggedInUser(@RequestBody Map<String, String> request) {
@@ -67,13 +66,26 @@ public class MyPageController {
 
     // get logined user's participated surveys
     @RequestMapping("/participated") //참여한 설문조사list 가져오기
-    public ResponseEntity<List<Survey>> getParticipatedS(@RequestParam String user){
+    public ResponseEntity<List<SurveyDetailsDto>> getParticipatedS(@RequestParam String user){
         Optional<User> userEntityWrapper = userRepository.findByEmail(user);
         User loggedInUser = userEntityWrapper.orElseThrow(
                 () -> new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다.")
         );
-        List<Survey> participatedSurveys = userRepository.findSurveysByUserId(loggedInUser.getId());
+        List<Participant> participants = participantRepository.findByUserId(loggedInUser.getId());
+        List<SurveyDetailsDto> participatedSurveys = participants.stream()
+                .map(participant -> mapToSurveyDto(participant.getSurvey()))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(participatedSurveys);
+    }
+
+    private SurveyDetailsDto mapToSurveyDto(Survey survey) {
+        return SurveyDetailsDto.builder()
+                .id(survey.getId())
+                .title(survey.getTitle())
+                .startDate(survey.getStartDate())
+                .endDate(survey.getEndDate())
+                .creator(survey.getCreator().getUsername())
+                .build();
     }
 
     //get responses for a survey by question
