@@ -302,6 +302,9 @@ public class SurveyController {
     // Search surveys with keyword
     @GetMapping("/search")
     public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+        System.out.println("searchSurveys() called");
+        System.out.println("keyword is: " + keyword);
+
         List<Survey> surveys = surveyService.searchSurveys(keyword);
         return ResponseEntity.ok(surveys);
     }
