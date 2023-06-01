@@ -55,13 +55,16 @@ public class MyPageController {
 
     //get logined user's created surveys
     @GetMapping("/created")
-    public ResponseEntity<List<Survey>> getCreatedSurveys(@RequestParam String user) {
+    public ResponseEntity<List<SurveyDetailsDto>> getCreatedSurveys(@RequestParam String user) {
         Optional<User> userEntityWrapper = userRepository.findByEmail(user);
         User loggedInUser = userEntityWrapper.orElseThrow(
                 () -> new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다.")
         );
         List<Survey> createdSurveys = surveyRepository.findAllByCreator(loggedInUser);
-        return ResponseEntity.ok(createdSurveys);
+        List<SurveyDetailsDto> surveyDetailsDtos = createdSurveys.stream()
+                .map(this::mapToSurveyDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(surveyDetailsDtos);
     }
 
     // get logined user's participated surveys
@@ -85,6 +88,7 @@ public class MyPageController {
                 .startDate(survey.getStartDate())
                 .endDate(survey.getEndDate())
                 .creator(survey.getCreator().getUsername())
+                .status(survey.getStatus())
                 .build();
     }
 
