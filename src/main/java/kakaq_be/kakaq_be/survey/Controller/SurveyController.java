@@ -212,6 +212,27 @@ public class SurveyController {
         return ResponseEntity.ok(surveyURL);
     }
 
+
+    //get surveyID by title, keyword, category
+    @GetMapping("/surveys/getSurveyId")
+    public ResponseEntity<Long> createUrl(
+            @RequestParam String title,
+            @RequestParam String keywords,
+            @RequestParam String category) {
+        System.out.println("createUrl() called");
+        System.out.println("Title: " + title);
+        System.out.println("Keywords: " + keywords);
+        System.out.println("Category: " + category);
+
+        Long surveyId = surveyService.getSurveyIdByTitleKeywordsCategory(title, keywords, category);
+
+        if (surveyId != null) {
+            return ResponseEntity.ok(surveyId);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // Get surveys by user id
 //    @GetMapping("/surveys/user/{userId}")
 //    public List<Survey> getSurveysByUserId(@PathVariable(value = "userId") Long userId)
