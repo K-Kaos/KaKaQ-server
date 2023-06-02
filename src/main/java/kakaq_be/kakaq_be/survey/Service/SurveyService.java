@@ -107,5 +107,17 @@ public class SurveyService {
                 .collect(Collectors.toList());
     }
 
+    public Long getSurveyIdByTitleKeywordsCategory(String title, String keywords, String category) {
+        List<Survey> surveys = surveyRepository.findByTitleAndKeywordsContainingAndCategory(title, keywords, category);
+
+        if (!surveys.isEmpty()) {
+            System.out.println("Result survey: " + surveys);
+            return surveys.get(0).getId();
+        } else {
+            System.out.println("Invalid survey!");
+            return null;
+        }
+    }
+
 
 }
