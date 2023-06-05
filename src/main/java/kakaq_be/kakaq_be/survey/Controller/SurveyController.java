@@ -370,16 +370,40 @@ public class SurveyController {
 
 
     // Search surveys with keyword
+//    @GetMapping("/search")
+//    public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+//        System.out.println("searchSurveys() called");
+//        System.out.println("keyword is: " + keyword);
+//
+//        List<Survey> surveys = surveyService.searchSurveys(keyword);
+//        return ResponseEntity.ok(surveys);
+//    }
     @GetMapping("/search")
-    public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+    public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam("keyword") String keyword) {
         System.out.println("searchSurveys() called");
         System.out.println("keyword is: " + keyword);
 
         List<Survey> surveys = surveyService.searchSurveys(keyword);
-        return ResponseEntity.ok(surveys);
+        List<SurveyDetailsDto> surveyDetailsDTOs = new ArrayList<>();
+
+        for (Survey survey : surveys) {
+            SurveyDetailsDto surveyDetailsDTO = new SurveyDetailsDto();
+            surveyDetailsDTO.setId(survey.getId());
+            surveyDetailsDTO.setTitle(survey.getTitle());
+            surveyDetailsDTO.setStartDate(survey.getStartDate());
+            surveyDetailsDTO.setEndDate(survey.getEndDate());
+            surveyDetailsDTO.setCategory(survey.getCategory());
+            surveyDetailsDTO.setKeywords(survey.getKeywords());
+            surveyDetailsDTO.setCity(survey.getCity());
+
+            surveyDetailsDTOs.add(surveyDetailsDTO);
+        }
+
+        return ResponseEntity.ok(surveyDetailsDTOs);
     }
 
-//    String gpt_API_KEY = "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";
+
+    //    String gpt_API_KEY = "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";
     String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {
