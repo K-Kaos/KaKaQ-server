@@ -101,6 +101,10 @@ public class MyPageController {
         List<Response> responses = responseRepository.findBySurveyId(id);
         Map<Long, List<ResponseByQuestionDto>> responsesByQuestionId = new HashMap<>();
 
+        if (responses.isEmpty()) {
+            throw new IllegalStateException("설문에 대한 응답이 없습니다.");
+        }
+
         for (Response response : responses) {
             Long questionId = response.getQuestion().getQuestion_id();
             String questionType = response.getQuestion().getType().getName();
