@@ -191,6 +191,7 @@ public class SurveyController {
             surveyDTO.setKeywords(survey.getKeywords());
             User user = survey.getCreator();
             surveyDTO.setCreator(user.getUsername());
+            surveyDTO.setCategory(survey.getCategory());
 
             surveyDTOs.add(surveyDTO);
         }
@@ -301,20 +302,46 @@ public class SurveyController {
 //        return publicSurvey;
 //    }
     @GetMapping("/surveys/filter")
-    public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
+    public List<SurveyDetailsDto> sortSurveys(@RequestParam(required = false) String category) {
         System.out.println("sortSurveys() called");
         System.out.println("category is: " + category);
         List<Survey> publicSurveys = surveyRepository.findAllByPublicState("public");
+        List<SurveyDetailsDto> surveyDetailsDtos = new ArrayList<>();
+
         // Check if category is provided and handle accordingly
         if (category != null) {
-            List<Survey> publicSurveysByCategory = surveyService.sortSurveys(publicSurveys, category);
-            System.out.println("Filtered surveys by category: " + publicSurveysByCategory);
-            return publicSurveysByCategory;
+            publicSurveys.stream()
+                    .filter(survey -> survey.getCategory().equalsIgnoreCase(category))
+                    .sorted(Comparator.comparing(Survey::getEndDate))
+                    .forEach(survey -> {
+                        SurveyDetailsDto surveyDetailsDto = mapToSurveyDto(survey);
+                        surveyDetailsDtos.add(surveyDetailsDto);
+                    });
+        } else {
+            // No category provided, sort all public surveys
+            publicSurveys.stream()
+                    .sorted(Comparator.comparing(Survey::getEndDate))
+                    .forEach(survey -> {
+                        SurveyDetailsDto surveyDetailsDto = mapToSurveyDto(survey);
+                        surveyDetailsDtos.add(surveyDetailsDto);
+                    });
         }
 
-        // No category provided, return all public surveys
-        System.out.println("All public surveys: " + publicSurveys);
-        return publicSurveys;
+        System.out.println("Filtered surveys: " + surveyDetailsDtos);
+        return surveyDetailsDtos;
+    }
+
+    private SurveyDetailsDto mapToSurveyDto(Survey survey) {
+        return SurveyDetailsDto.builder()
+                .id(survey.getId())
+                .title(survey.getTitle())
+                .publicState(survey.getPublicState())
+                .startDate(survey.getStartDate())
+                .endDate(survey.getEndDate())
+                .creator(survey.getCreator().getUsername())
+                .category(survey.getCategory())
+                .keywords(survey.getKeywords())
+                .build();
     }
 
 
