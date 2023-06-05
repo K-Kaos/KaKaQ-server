@@ -77,6 +77,7 @@ public class SurveyController {
         surveyDTO.setStartDate(survey.getStartDate());
         surveyDTO.setEndDate(survey.getEndDate());
         surveyDTO.setCategory(survey.getCategory());
+        surveyDTO.setStatus(survey.getStatus());
 
         List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
