@@ -61,6 +61,15 @@ public class SurveyController {
     @Autowired
     ResponseRepository responseRepository;
 
+
+    //get participate users by survey id from participant
+    @GetMapping("/surveys/participant/{id}")
+    public List<User> getParticipants(@PathVariable Long id){
+        List<User> participants = participantRepository.findUsersBySurveyId(id);
+
+        return participants;
+    }
+
     //get survey+question
     @GetMapping("/surveys/get/{id}")
     public SurveyDetailsDto getSurvey(@PathVariable Long id){
@@ -77,6 +86,7 @@ public class SurveyController {
         surveyDTO.setStartDate(survey.getStartDate());
         surveyDTO.setEndDate(survey.getEndDate());
         surveyDTO.setCategory(survey.getCategory());
+        surveyDTO.setCreator(String.valueOf(survey.getCreator().getUsername()));
 
         List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
@@ -135,6 +145,7 @@ public class SurveyController {
             if (questionOptional.isPresent()) {
                 Question questionq = questionOptional.get();
                 survey.addQuestion(questionq);
+                answer = "success";
                 answer = "success";
             }
             surveyRepository.save(survey);

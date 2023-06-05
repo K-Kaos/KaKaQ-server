@@ -28,9 +28,6 @@ public class UserController {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-
-
     @PostMapping("/user/kakao")
     public String KakaoLogin(@RequestBody kakaologinDto user) {
         String email = user.getEmail();
@@ -38,7 +35,7 @@ public class UserController {
         Optional<User> userEntityWrapper = userRepository.findByEmail(email);
         User userEntity = userEntityWrapper.orElseThrow(
                 ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
-
+        System.out.println(userEntity);
         if (userEntity!=null){
             System.out.println(userEntity.getUsername()+"님, 로그인성공");
             return userEntity.getUsername()+"/home";
@@ -87,36 +84,6 @@ public class UserController {
             return "/duplicate";
         }
     }
-//    @GetMapping("/oauth")
-//    public Long kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-//        // code: 카카오 서버로부터 받은 인가 코드
-//        SignupSocialDto signupKakaoDto = kakaoUserService.kakaoLogin(code);
-//
-//        String kakaoAccessToken = signupKakaoDto.getToken();
-//        String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(kakaoAccessToken);
-//        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-//
-//        // 카카오 API 호출 및 사용자 정보 가져오기
-//        RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<Map> responseEntity = restTemplate.exchange(userInfoUrl, HttpMethod.GET, requestEntity, Map.class);
-//        Map<String, Object> userInfo = responseEntity.getBody();
-//
-//        // 사용자 정보 처리 (예시: 닉네임 가져오기)
-//        if (userInfo != null) {
-//            String nickname = (String) userInfo.get("nickname");
-//            String email = (String) userInfo.get("kakao_account.email");
-//
-//            System.out.println("Nickname: " + nickname);
-//            System.out.println("Email: " + email);
-//            //이곳에서 user db와 비교후 회원가입 or  login'
-//
-//        }
-//
-//
-//        return signupKakaoDto.getUserId();
-//    }
 
     @GetMapping("/user/{userId}/surveys")
     public List<Survey> getSurveyByUserId(@PathVariable Long userId) {
