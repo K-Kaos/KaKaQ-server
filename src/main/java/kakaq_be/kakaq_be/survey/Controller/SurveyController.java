@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -64,10 +65,19 @@ public class SurveyController {
 
     //get participate users by survey id from participant
     @GetMapping("/surveys/participant/{id}")
-    public List<User> getParticipants(@PathVariable Long id){
+    public List<UserDto> getParticipants(@PathVariable Long id) {
         List<User> participants = participantRepository.findUsersBySurveyId(id);
 
-        return participants;
+        List<UserDto> participantDtos = participants.stream()
+                .map(user -> {
+                    return UserDto.builder()
+                            .id(user.getId())
+                            .role(user.getRole())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return participantDtos;
     }
 
     //get survey+question
