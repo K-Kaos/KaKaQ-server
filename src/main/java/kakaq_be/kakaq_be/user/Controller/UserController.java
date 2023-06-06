@@ -101,7 +101,7 @@ public class UserController {
 
         if (bCryptPasswordEncoder.matches(password,userEntity.getPassword())){
             System.out.println(userEntity.getUsername()+"님, 로그인성공");
-            return userEntity.getUsername()+"/home";
+            return userEntity.getUsername()+"/"+userEntity.getRole()+"/home";
         }else{
             System.out.println("로그인실패");
             return "/login";
