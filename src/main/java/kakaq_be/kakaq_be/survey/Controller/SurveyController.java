@@ -98,6 +98,7 @@ public class SurveyController {
         surveyDTO.setCategory(survey.getCategory());
         surveyDTO.setStatus(survey.getStatus());
         surveyDTO.setCreator(String.valueOf(survey.getCreator().getUsername()));
+        surveyDTO.setCreatorRole(survey.getCreator().getRole());
 
         List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
@@ -361,6 +362,7 @@ public class SurveyController {
                 .startDate(survey.getStartDate())
                 .endDate(survey.getEndDate())
                 .creator(survey.getCreator().getUsername())
+                .creatorRole(survey.getCreator().getRole())
                 .category(survey.getCategory())
                 .keywords(survey.getKeywords())
                 .build();
@@ -395,6 +397,8 @@ public class SurveyController {
             surveyDetailsDTO.setCategory(survey.getCategory());
             surveyDetailsDTO.setKeywords(survey.getKeywords());
             surveyDetailsDTO.setCity(survey.getCity());
+            surveyDetailsDTO.setCreatorRole(survey.getCreator().getRole());
+            surveyDetailsDTO.setCreator(survey.getCreator().getUsername());
 
             surveyDetailsDTOs.add(surveyDetailsDTO);
         }

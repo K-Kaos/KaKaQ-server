@@ -88,6 +88,7 @@ public class MyPageController {
                 .startDate(survey.getStartDate())
                 .endDate(survey.getEndDate())
                 .creator(survey.getCreator().getUsername())
+                .creatorRole(survey.getCreator().getRole())
                 .status(survey.getStatus())
                 .build();
     }
