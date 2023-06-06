@@ -13,10 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
-    private Long id;
-    private String username;
-    //private String password;
+public class kakaologinDto {
     private String email;
-    private String role;
 }

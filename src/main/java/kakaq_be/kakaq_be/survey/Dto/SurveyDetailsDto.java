@@ -20,6 +20,8 @@ public class SurveyDetailsDto {
     private Date startDate;
     private Date endDate;
     private String creator;
+    private String creatorRole;
+    private String category;
     private List<String> keywords;
     private String city;
     private String status;

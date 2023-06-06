@@ -1,6 +1,5 @@
 package kakaq_be.kakaq_be.user.Controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kakaq_be.kakaq_be.survey.Domain.Survey;
 import kakaq_be.kakaq_be.user.Domain.User;
 import kakaq_be.kakaq_be.user.Repository.UserRepository;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.MediaType;
+import kakaq_be.kakaq_be.user.Dto.kakaologinDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +27,23 @@ public class UserController {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @PostMapping("/user/kakao")
+    public String KakaoLogin(@RequestBody kakaologinDto user) {
+        String email = user.getEmail();
+        System.out.println("카카오유저, 유저디비 비교");
+        Optional<User> userEntityWrapper = userRepository.findByEmail(email);
+        User userEntity = userEntityWrapper.orElseThrow(
+                ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
+        System.out.println(userEntity);
+        if (userEntity!=null){
+            System.out.println(userEntity.getUsername()+"님, 로그인성공");
+            return userEntity.getUsername()+"/home";
+        }else{
+            System.out.println("없는 회원입니다.");
+            return "회원가입 필요";
+        }
+    }
 
 
     String gpt_API_KEY = "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";
@@ -59,7 +76,7 @@ public class UserController {
             String rawPassword = rq_user.getPassword();
             String encPassword = bCryptPasswordEncoder.encode(rawPassword);
             rq_user.setPassword(encPassword);
-            User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail());
+            User new_user = new User(rq_user.getId(), rq_user.getUsername(), rq_user.getPassword(), rq_user.getEmail(), rq_user.getRole());
             userRepository.save(new_user);
             return "/login";
         } catch (DataIntegrityViolationException e) {
@@ -82,7 +99,7 @@ public class UserController {
                 ()->new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
         if (bCryptPasswordEncoder.matches(password,userEntity.getPassword())){
             System.out.println(userEntity.getUsername()+"님, 로그인성공");
-            return userEntity.getUsername()+"/home";
+            return userEntity.getUsername()+"/"+userEntity.getRole()+"/home";
         }else{
             System.out.println("로그인실패");
             return "/login";

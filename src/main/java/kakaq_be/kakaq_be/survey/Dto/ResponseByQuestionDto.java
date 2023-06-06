@@ -4,16 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResponseDto {
-    private Long id;
-    private Long questionId;
+public class ResponseByQuestionDto {
     private String value;
-//    private Map<String,Long> optionCounts;
-//    private QuestionDetailsDto question;
+    private String answerer;
+    private String answererRole;
+    private Long count;
 }

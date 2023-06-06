@@ -20,5 +20,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     // Search surveys with keyword
     List<Survey> findByKeywordsContaining(String keyword);
 
+    List<Survey> findByTitleAndKeywordsContainingAndCategory(String title, String keyword, String category);
+
 }
 

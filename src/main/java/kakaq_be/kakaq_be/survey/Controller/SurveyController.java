@@ -1,6 +1,6 @@
 package kakaq_be.kakaq_be.survey.Controller;
 
-import kakaq_be.kakaq_be.survey.Domain.QuestionType;
+import kakaq_be.kakaq_be.survey.Domain.*;
 import kakaq_be.kakaq_be.survey.Dto.*;
 import kakaq_be.kakaq_be.survey.Repository.*;
 import kakaq_be.kakaq_be.user.Domain.User;
@@ -10,9 +10,6 @@ import kakaq_be.kakaq_be.user.Service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import kakaq_be.kakaq_be.survey.Repository.SurveyRepository;
 import org.springframework.web.client.RestTemplate;
-import kakaq_be.kakaq_be.survey.Domain.Question;
-import kakaq_be.kakaq_be.survey.Domain.Response;
-import kakaq_be.kakaq_be.survey.Domain.Survey;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import kakaq_be.kakaq_be.survey.Service.QuestionService;
@@ -30,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -57,13 +55,33 @@ public class SurveyController {
     @Autowired
     private ResponseService responseService;
     @Autowired
+    ParticipantRepository participantRepository;
+    @Autowired
     QuestionTypeRepository questionTypeRepository;
 
     @Autowired
     ResponseRepository responseRepository;
 
-    //test get survey+question
-    @GetMapping("/surveys/test/{id}")
+
+    //get participate users by survey id from participant
+    @GetMapping("/surveys/participant/{id}")
+    public List<UserDto> getParticipants(@PathVariable Long id) {
+        List<User> participants = participantRepository.findUsersBySurveyId(id);
+
+        List<UserDto> participantDtos = participants.stream()
+                .map(user -> {
+                    return UserDto.builder()
+                            .id(user.getId())
+                            .role(user.getRole())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return participantDtos;
+    }
+
+    //get survey+question
+    @GetMapping("/surveys/get/{id}")
     public SurveyDetailsDto getSurvey(@PathVariable Long id){
         Optional<Survey> surveyEntityWrapper = surveyRepository.findSurveyById(id);
         Survey survey = surveyEntityWrapper.orElseThrow(
@@ -75,7 +93,12 @@ public class SurveyController {
         surveyDTO.setPublicState(survey.getPublicState());
         surveyDTO.setKeywords(survey.getKeywords());
         surveyDTO.setCity(survey.getCity());
+        surveyDTO.setStartDate(survey.getStartDate());
+        surveyDTO.setEndDate(survey.getEndDate());
+        surveyDTO.setCategory(survey.getCategory());
         surveyDTO.setStatus(survey.getStatus());
+        surveyDTO.setCreator(String.valueOf(survey.getCreator().getUsername()));
+        surveyDTO.setCreatorRole(survey.getCreator().getRole());
 
         List<QuestionDetailsDto> questionDTOs = new ArrayList<>();
         for (Question question : survey.getQuestions()) {
@@ -135,6 +158,7 @@ public class SurveyController {
                 Question questionq = questionOptional.get();
                 survey.addQuestion(questionq);
                 answer = "success";
+                answer = "success";
             }
             surveyRepository.save(survey);
         }
@@ -150,8 +174,29 @@ public class SurveyController {
         Question questionEntity = questionService.getQuestionById(questionId);
         User userEntity = userService.findUserfromSurvey(response.getUser().getEmail());
         Response new_response = new Response(response.getResponse_id(), response.getText(), questionEntity, surveyEntity, userEntity);
+
         responseRepository.save(new_response);
         return Long.toString(new_response.getResponse_id());
+    }
+
+    // 응답 시, Participant(참여자) 테이블에 Survey와 User의 아이디 저장
+    @GetMapping("/survey/participant")
+    public String AddSurveyParticipant(@RequestParam("surveyId") Long surveyId, @RequestParam("userEmail") String userEmail){
+        try{
+            Survey surveyEntity = surveyService.getSurveyById(surveyId);
+            User userEntity = userService.findUserfromSurvey(userEmail);
+            // 중복 체크
+            if (participantRepository.existsBySurveyAndUser(surveyEntity, userEntity)) {
+                return "duplicate";
+            }
+            Participant participant = new Participant();
+            participant.setSurvey(surveyEntity);
+            participant.setUser(userEntity);
+            participantRepository.save(participant);
+            return "ok";
+        }catch (Exception e) {
+            return "fail";
+        }
     }
 
     // Get public surveys
@@ -169,6 +214,7 @@ public class SurveyController {
             surveyDTO.setKeywords(survey.getKeywords());
             User user = survey.getCreator();
             surveyDTO.setCreator(user.getUsername());
+            surveyDTO.setCategory(survey.getCategory());
 
             surveyDTOs.add(surveyDTO);
         }
@@ -186,8 +232,29 @@ public class SurveyController {
             return ResponseEntity.notFound().build();
         }
         Survey survey = surveyOptional.get();
-        String surveyURL = String.format("https://localhost:8080/api/surveys/%d", survey.getId());
+        String surveyURL = String.format("http://localhost:3000/participate/%d", survey.getId());
         return ResponseEntity.ok(surveyURL);
+    }
+
+
+    //get surveyID by title, keyword, category
+    @GetMapping("/surveys/getSurveyId")
+    public ResponseEntity<Long> createUrl(
+            @RequestParam String title,
+            @RequestParam String keywords,
+            @RequestParam String category) {
+        System.out.println("createUrl() called");
+        System.out.println("Title: " + title);
+        System.out.println("Keywords: " + keywords);
+        System.out.println("Category: " + category);
+
+        Long surveyId = surveyService.getSurveyIdByTitleKeywordsCategory(title, keywords, category);
+
+        if (surveyId != null) {
+            return ResponseEntity.ok(surveyId);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Get surveys by user id
@@ -247,26 +314,100 @@ public class SurveyController {
     }
 
     // Filter by category and Sort by end_date
+//    @GetMapping("/surveys/filter")
+//    public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
+//        System.out.println("sortSurveys() called");
+//        List<Survey> publicSurvey = surveyRepository.findAllByPublicState("public");
+//        if (category != null) {
+//            return surveyService.sortSurveys(publicSurvey, category);
+//        }
+//        System.out.println("There is no survey for this category!");
+//        return publicSurvey;
+//    }
     @GetMapping("/surveys/filter")
-    public List<Survey> sortSurveys(@RequestParam(required = false) String category) {
+    public List<SurveyDetailsDto> sortSurveys(@RequestParam(required = false) String category) {
         System.out.println("sortSurveys() called");
-        List<Survey> publicSurvey = surveyRepository.findAllByPublicState("public");
+        System.out.println("category is: " + category);
+        List<Survey> publicSurveys = surveyRepository.findAllByPublicState("public");
+        List<SurveyDetailsDto> surveyDetailsDtos = new ArrayList<>();
+
+        // Check if category is provided and handle accordingly
         if (category != null) {
-            return surveyService.sortSurveys(publicSurvey, category);
+            publicSurveys.stream()
+                    .filter(survey -> survey.getCategory().equalsIgnoreCase(category))
+                    .sorted(Comparator.comparing(Survey::getEndDate))
+                    .forEach(survey -> {
+                        SurveyDetailsDto surveyDetailsDto = mapToSurveyDto(survey);
+                        surveyDetailsDtos.add(surveyDetailsDto);
+                    });
+        } else {
+            // No category provided, sort all public surveys
+            publicSurveys.stream()
+                    .sorted(Comparator.comparing(Survey::getEndDate))
+                    .forEach(survey -> {
+                        SurveyDetailsDto surveyDetailsDto = mapToSurveyDto(survey);
+                        surveyDetailsDtos.add(surveyDetailsDto);
+                    });
         }
-        System.out.println("There is no survey for this category!");
-        return publicSurvey;
+
+        System.out.println("Filtered surveys: " + surveyDetailsDtos);
+        return surveyDetailsDtos;
     }
+
+    private SurveyDetailsDto mapToSurveyDto(Survey survey) {
+        return SurveyDetailsDto.builder()
+                .id(survey.getId())
+                .title(survey.getTitle())
+                .publicState(survey.getPublicState())
+                .startDate(survey.getStartDate())
+                .endDate(survey.getEndDate())
+                .creator(survey.getCreator().getUsername())
+                .creatorRole(survey.getCreator().getRole())
+                .category(survey.getCategory())
+                .keywords(survey.getKeywords())
+                .build();
+    }
+
+
 
 
     // Search surveys with keyword
+//    @GetMapping("/search")
+//    public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+//        System.out.println("searchSurveys() called");
+//        System.out.println("keyword is: " + keyword);
+//
+//        List<Survey> surveys = surveyService.searchSurveys(keyword);
+//        return ResponseEntity.ok(surveys);
+//    }
     @GetMapping("/search")
-    public ResponseEntity<List<Survey>> searchSurveys(@RequestParam("keyword") String keyword) {
+    public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam("keyword") String keyword) {
+        System.out.println("searchSurveys() called");
+        System.out.println("keyword is: " + keyword);
+
         List<Survey> surveys = surveyService.searchSurveys(keyword);
-        return ResponseEntity.ok(surveys);
+        List<SurveyDetailsDto> surveyDetailsDTOs = new ArrayList<>();
+
+        for (Survey survey : surveys) {
+            SurveyDetailsDto surveyDetailsDTO = new SurveyDetailsDto();
+            surveyDetailsDTO.setId(survey.getId());
+            surveyDetailsDTO.setTitle(survey.getTitle());
+            surveyDetailsDTO.setStartDate(survey.getStartDate());
+            surveyDetailsDTO.setEndDate(survey.getEndDate());
+            surveyDetailsDTO.setCategory(survey.getCategory());
+            surveyDetailsDTO.setKeywords(survey.getKeywords());
+            surveyDetailsDTO.setCity(survey.getCity());
+            surveyDetailsDTO.setCreatorRole(survey.getCreator().getRole());
+            surveyDetailsDTO.setCreator(survey.getCreator().getUsername());
+
+            surveyDetailsDTOs.add(surveyDetailsDTO);
+        }
+
+        return ResponseEntity.ok(surveyDetailsDTOs);
     }
 
-//    String gpt_API_KEY = "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";
+
+    //    String gpt_API_KEY = "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";
     String gpt_API_KEY = "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";
     @GetMapping("/survey/chatbot")
     public String sendTopic(HttpServletRequest param) {

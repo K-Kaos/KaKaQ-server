@@ -105,3 +105,5 @@ public class Survey {
         this.keywords = keywords;
     }
 }
+
+//    public User getCreator(){return creator;}
